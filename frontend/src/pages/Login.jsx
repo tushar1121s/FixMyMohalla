@@ -26,34 +26,34 @@ function Login() {
         navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.detail || "Login failed");
+      setError(err.response?.data?.detail || "Invalid e-mail or Password");
     }
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "50px auto" }}>
+    <div className="auth-container card">
       <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="alert-error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
+          className="input"
           type="email"
           name="email"
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
           required
-          style={{ display: "block", width: "100%", marginBottom: 10 }}
         />
         <input
+          className="input"
           type="password"
           name="password"
           placeholder="Password"
           value={form.password}
           onChange={handleChange}
           required
-          style={{ display: "block", width: "100%", marginBottom: 10 }}
         />
-        <button type="submit">Login</button>
+        <button className="btn btn-primary" type="submit">Login</button>
       </form>
       <p>
         No account? <Link to="/register">Register</Link>

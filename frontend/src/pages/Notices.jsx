@@ -53,68 +53,59 @@ function Notices() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="page-container">Loading...</p>;
 
   return (
-    <div style={{ maxWidth: 700, margin: "30px auto" }}>
-      <Link to={role === "admin" ? "/admin" : "/dashboard"}>← Back</Link>
+    <div className="page-container">
+      <Link className="back-link" to={role === "admin" ? "/admin" : "/dashboard"}>← Back</Link>
       <h2>Notice Board</h2>
 
       {role === "admin" && (
-        <form
-          onSubmit={handlePostNotice}
-          style={{ border: "1px solid #ccc", padding: 12, marginBottom: 20 }}
-        >
+        <form onSubmit={handlePostNotice} className="card notice-form">
           <h3>Post New Notice</h3>
-          {postError && <p style={{ color: "red" }}>{postError}</p>}
+          {postError && <p className="alert-error">{postError}</p>}
           <input
+            className="input"
             type="text"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            style={{ display: "block", width: "100%", marginBottom: 10 }}
           />
           <textarea
+            className="input"
             placeholder="Notice body"
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
             rows={3}
-            style={{ display: "block", width: "100%", marginBottom: 10 }}
           />
-          <label style={{ display: "block", marginBottom: 10 }}>
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={isImportant}
               onChange={(e) => setIsImportant(e.target.checked)}
-            />{" "}
+            />
             Mark as Important
           </label>
-          <button type="submit">Post Notice</button>
+          <button className="btn btn-primary" type="submit">Post Notice</button>
         </form>
       )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {notices.length === 0 && !error && <p>No notices yet.</p>}
+      {error && <p className="alert-error">{error}</p>}
+      {notices.length === 0 && !error && <p className="text-muted">No notices yet.</p>}
 
       {notices.map((n) => (
         <div
           key={n.id}
-          style={{
-            border: n.is_important ? "2px solid orange" : "1px solid #ccc",
-            borderRadius: 6,
-            padding: 12,
-            marginBottom: 10,
-            backgroundColor: n.is_important ? "#fff8e1" : "white",
-          }}
+          className={`card ${n.is_important ? "notice-card-important" : ""}`}
         >
           <p>
             <strong>{n.title}</strong>{" "}
-            {n.is_important && <span style={{ color: "orange" }}>(Important)</span>}
+            {n.is_important && <span className="important-tag">(Important)</span>}
           </p>
           <p>{n.body}</p>
-          <p style={{ fontSize: 12, color: "#666" }}>
+          <p className="notice-timestamp">
             {new Date(n.created_at).toLocaleString()}
           </p>
         </div>

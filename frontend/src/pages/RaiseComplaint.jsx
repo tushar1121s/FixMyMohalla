@@ -43,33 +43,33 @@ function RaiseComplaint() {
     };
 
     return (
-        <div style={{ maxWidth: 400, margin: "50px auto" }}>
+        <div className="auth-container card">
             <h2>Raise Complaint</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="alert-error">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <input
+                    className="input"
                     type="text"
                     placeholder="Category (e.g. Plumbing, Electrical, etc ... )"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     required
-                    style={{ display: "block", width: "100%", marginBottom: 10 }}
                 />
                 <textarea
+                    className="input"
                     placeholder="Description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
                     rows={4}
-                    style={{ display: "block", width: "100%", marginBottom: 10 }}
                 />
                 <input
+                    className="file-input"
                     type="file"
                     accept="image/*"
                     onChange={(e) => setPhoto(e.target.files[0])}
-                    style={{ display: "block", marginBottom: 10 }}
                 />
-                <button type="submit" disabled={submitting}>
+                <button className="btn btn-primary" type="submit" disabled={submitting}>
                     {submitting ? "Submitting..." : "Submit Complaint"}
                 </button>
             </form>

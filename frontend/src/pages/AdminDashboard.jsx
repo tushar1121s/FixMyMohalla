@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 
+function statusBadgeClass(status) {
+    if (status === "Open") return "badge badge-open";
+    if (status === "In Progress") return "badge badge-progress";
+    if (status === "Resolved") return "badge badge-resolved";
+    return "badge";
+}
+
 function AdminDashboard() {
     const [complaints, setComplaints] = useState([]);
     const [error, setError] = useState("");
@@ -62,77 +69,65 @@ function AdminDashboard() {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        navigate("/login");
-    };
-
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <p className="page-container-wide">Loading...</p>;
 
     return (
-        <div style={{ maxWidth: 900, margin: "30px auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="page-container-wide">
+            <div className="page-header">
                 <h2>Admin Dashboard — All Complaints</h2>
-                <button onClick={handleLogout}>Logout</button>
             </div>
 
-            <p>
-                <Link to="/notices">Manage Notice Board</Link>
+            <p style={{ marginBottom: "var(--space-md)" }}>
+                <Link className="back-link" to="/notices">Manage Notice Board</Link>
             </p>
 
-            <form onSubmit={handleFilterSubmit} style={{ marginBottom: 20 }}>
+            <form onSubmit={handleFilterSubmit} className="filter-form">
                 <input
+                    className="input"
                     type="text"
                     placeholder="Filter by category"
                     value={filters.category}
                     onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                    style={{ marginRight: 10 }}
                 />
                 <select
+                    className="input"
                     value={filters.status}
                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                    style={{ marginRight: 10 }}
                 >
                     <option value="">All Status</option>
                     <option value="Open">Open</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Resolved">Resolved</option>
                 </select>
-                <button type="submit">Apply Filters</button>
+                <button className="btn btn-primary" type="submit">Apply Filters</button>
             </form>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {complaints.length === 0 && !error && <p>No complaints found.</p>}
+            {error && <p className="alert-error">{error}</p>}
+            {complaints.length === 0 && !error && <p className="text-muted">No complaints found.</p>}
 
             {complaints.map((c) => (
                 <div
                     key={c.id}
-                    style={{
-                        border: c.is_overdue ? "2px solid red" : "1px solid #ccc",
-                        borderRadius: 6,
-                        padding: 12,
-                        marginBottom: 10,
-                        backgroundColor: c.is_overdue ? "#fff5f5" : "white",
-                    }}
+                    className={`card admin-card ${c.is_overdue ? "card-overdue" : ""}`}
                 >
                     <p>
                         <strong>#{c.id} — {c.category}</strong>{" "}
-                        {c.is_overdue && <span style={{ color: "red" }}>(OVERDUE)</span>}
+                        {c.is_overdue && <span className="overdue-tag">(OVERDUE)</span>}
                     </p>
                     <p>{c.description}</p>
-                    <p><strong>Status:</strong> {c.current_status} | <strong>Priority:</strong> {c.priority}</p>
+                    <p>
+                        <span className={statusBadgeClass(c.current_status)}>{c.current_status}</span>
+                        {"  "}
+                        <strong>Priority:</strong> {c.priority}
+                    </p>
                     {c.photo_url && (
-                        <img
-                            src={c.photo_url}
-                            alt="complaint"
-                            style={{ maxWidth: 120, display: "block", marginBottom: 8 }}
-                        />
+                        <img src={c.photo_url} alt="complaint" />
                     )}
 
-                    <div style={{ marginTop: 8 }}>
-                        <label>Update Status: </label>
+                    <div className="control-group">
+                        <label>Update Status:</label>
                         <select
+                            className="input"
                             value={c.current_status}
                             onChange={(e) => handleStatusUpdate(c.id, e.target.value)}
                             disabled={c.current_status === "Resolved"}
@@ -143,9 +138,10 @@ function AdminDashboard() {
                         </select>
                     </div>
 
-                    <div style={{ marginTop: 8 }}>
-                        <label>Update Priority: </label>
+                    <div className="control-group">
+                        <label>Update Priority:</label>
                         <select
+                            className="input"
                             value={c.priority}
                             onChange={(e) => handlePriorityUpdate(c.id, e.target.value)}
                         >

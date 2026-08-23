@@ -14,31 +14,22 @@ function Navbar() {
   if (!token) return null; // login/register pages pe navbar nahi dikhega
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "10px 20px",
-        borderBottom: "1px solid #ccc",
-        marginBottom: 20,
-      }}
-    >
-      <div style={{ display: "flex", gap: 15 }}>
+    <div className="navbar">
+      <div className="navbar-links">
         {role === "admin" ? (
           <>
-            <Link to="/admin">Admin Dashboard</Link>
-            <Link to="/notices">Notices</Link>
+            <Link className="nav-link" to="/admin">Admin Dashboard</Link>
+            <Link className="nav-link" to="/notices">Notices</Link>
           </>
         ) : (
           <>
-            <Link to="/dashboard">My Complaints</Link>
-            <Link to="/raise-complaint">Raise Complaint</Link>
-            <Link to="/notices">Notices</Link>
+            <Link className="nav-link" to="/dashboard">My Complaints</Link>
+            <Link className="nav-link" to="/raise-complaint">Raise Complaint</Link>
+            <Link className="nav-link" to="/notices">Notices</Link>
           </>
         )}
       </div>
-      <button onClick={handleLogout}>Logout</button>
+      <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
     </div>
   );
 }

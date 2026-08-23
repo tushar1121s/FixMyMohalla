@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 
+function statusBadgeClass(status) {
+    if (status === "Open") return "badge badge-open";
+    if (status === "In Progress") return "badge badge-progress";
+    if (status === "Resolved") return "badge badge-resolved";
+    return "badge";
+}
+
 function Dashboard() {
     const [complaints, setComplaints] = useState([]);
     const [error, setError] = useState("");
@@ -24,52 +31,35 @@ function Dashboard() {
             .finally(() => setLoading(false));
     }, [navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        navigate("/login");
-    };
-
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <p className="page-container">Loading...</p>;
 
     return (
-        <div style={{ maxWidth: 700, margin: "30px auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="page-container">
+            <div className="page-header">
                 <h2>My Complaints</h2>
-                <button onClick={handleLogout}>Logout</button>
             </div>
 
-            <Link to="/raise-complaint">
-                <button style={{ marginBottom: 20 }}>+ Raise New Complaint</button>
-            </Link>
-            <Link to="/notices">
-                <button style={{ marginBottom: 20, marginLeft: 10 }}>View Notices</button>
-            </Link>
+            <div className="action-row">
+                <Link to="/raise-complaint">
+                    <button className="btn btn-primary">+ Raise New Complaint</button>
+                </Link>
+                <Link to="/notices">
+                    <button className="btn">View Notices</button>
+                </Link>
+            </div>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="alert-error">{error}</p>}
 
-            {complaints.length === 0 && !error && <p>No complaints yet.</p>}
+            {complaints.length === 0 && !error && <p className="text-muted">No complaints yet.</p>}
 
             {complaints.map((c) => (
-                <div
-                    key={c.id}
-                    style={{
-                        border: "1px solid #ccc",
-                        borderRadius: 6,
-                        padding: 12,
-                        marginBottom: 10,
-                    }}
-                >
+                <div key={c.id} className="card complaint-card">
                     <p><strong>Category:</strong> {c.category}</p>
                     <p><strong>Description:</strong> {c.description}</p>
-                    <p><strong>Status:</strong> {c.current_status}</p>
+                    <p><strong>Status:</strong> <span className={statusBadgeClass(c.current_status)}>{c.current_status}</span></p>
                     <p><strong>Priority:</strong> {c.priority}</p>
                     {c.photo_url && (
-                        <img
-                            src={c.photo_url}
-                            alt="complaint"
-                            style={{ maxWidth: 150, display: "block", marginTop: 8 }}
-                        />
+                        <img src={c.photo_url} alt="complaint" />
                     )}
                     <Link to={`/complaints/${c.id}`}>View Details</Link>
                 </div>
