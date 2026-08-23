@@ -12,7 +12,10 @@ app = FastAPI(title="Society Maintenance Tracker")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://fix-my-mohalla.vercel.app"],
+    allow_origins=[
+        "https://fix-my-mohalla.vercel.app",
+        "http://localhost:5173"
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
