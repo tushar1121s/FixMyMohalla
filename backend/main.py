@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
 import models
 from routers import auth_routes
+from routers import complaints
 
 app = FastAPI(title="Society Maintenance Tracker")
 
@@ -16,6 +17,7 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_routes.router, prefix="/auth", tags=["auth"])
+app.include_router(complaints.router, prefix="/complaints", tags=["complaints"])
 
 
 @app.get("/")
