@@ -1,12 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from datetime import datetime, timezone
+from typing import Optional, List
+
+
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
 from database import get_db
 from models import Complaint, ComplaintHistory, User
-from schemas import ComplaintOut, ComplaintDetailOut
-from auth import get_current_user
+from schemas import ComplaintOut, ComplaintDetailOut, StatusUpdate, PriorityUpdate
+from auth import get_current_user, require_admin
 from utils.cloudinary_upload import upload_photo
+from config import OVERDUE_DAYS
 
 router = APIRouter()
 
@@ -84,3 +89,115 @@ def get_complaint_detail(
     result = ComplaintDetailOut.model_validate(complaint)
     result.history = history
     return result
+
+
+@router.get("")
+def get_all_complaints(
+    category: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+    date_from: Optional[datetime] = Query(None),
+    date_to: Optional[datetime] = Query(None),
+    db: Session = Depends(get_db),
+    admin_user: User = Depends(require_admin),
+):
+    query = db.query(Complaint)
+
+    if category:
+        query = query.filter(Complaint.category == category)
+    if status:
+        query = query.filter(Complaint.current_status == status)
+    if date_from:
+        query = query.filter(Complaint.created_at >= date_from)
+    if date_to:
+        query = query.filter(Complaint.created_at <= date_to)
+
+    complaints = query.all()
+
+    now = datetime.now(timezone.utc)
+    result = []
+    for c in complaints:
+        created_at = c.created_at
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+
+        is_overdue = (
+            c.current_status != "Resolved"
+            and (now - created_at).days > OVERDUE_DAYS
+        )
+
+        result.append({
+            "id": c.id,
+            "category": c.category,
+            "description": c.description,
+            "current_status": c.current_status,
+            "priority": c.priority,
+            "photo_url": c.photo_url,
+            "created_at": c.created_at,
+            "resolved_at": c.resolved_at,
+            "is_overdue": is_overdue,
+        })
+
+    result.sort(key=lambda x: (not x["is_overdue"], -x["created_at"].timestamp()))
+
+    return result
+
+
+@router.patch("/{complaint_id}/status")
+def update_complaint_status(
+    complaint_id: int,
+    update: StatusUpdate,
+    db: Session = Depends(get_db),
+    admin_user: User = Depends(require_admin),
+):
+    complaint = db.query(Complaint).filter(Complaint.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    if complaint.current_status == "Resolved":
+        raise HTTPException(status_code=400, detail="Complaint already resolved, cannot update")
+
+    complaint.current_status = update.status
+    if update.status == "Resolved":
+        complaint.resolved_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(complaint)
+
+    history = ComplaintHistory(
+        complaint_id=complaint.id,
+        status=update.status,
+        note=update.note,
+        changed_by=admin_user.id,
+    )
+    db.add(history)
+    db.commit()
+
+    return {
+        "id": complaint.id,
+        "current_status": complaint.current_status,
+        "resolved_at": complaint.resolved_at,
+    }
+
+from schemas import PriorityUpdate
+
+@router.patch("/{complaint_id}/priority")
+def update_complaint_priority(
+    complaint_id: int,
+    update: PriorityUpdate,
+    db: Session = Depends(get_db),
+    admin_user: User = Depends(require_admin),
+):
+    complaint = db.query(Complaint).filter(Complaint.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    complaint.priority = update.priority
+    db.commit()
+    db.refresh(complaint)
+
+    return {
+        "id": complaint.id,
+        "priority": complaint.priority,
+    }
+
+
