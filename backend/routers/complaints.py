@@ -1,25 +1,33 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
 from database import get_db
 from models import Complaint, ComplaintHistory, User
-from schemas import ComplaintCreate, ComplaintOut, ComplaintDetailOut
+from schemas import ComplaintOut, ComplaintDetailOut
 from auth import get_current_user
+from utils.cloudinary_upload import upload_photo
 
 router = APIRouter()
 
 
 @router.post("/", response_model=ComplaintOut)
 def create_complaint(
-    payload: ComplaintCreate,
+    category: str = Form(...),
+    description: str = Form(...),
+    photo: UploadFile = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    photo_url = None
+    if photo is not None:
+        photo_url = upload_photo(photo)
+
     complaint = Complaint(
         resident_id=current_user.id,
-        category=payload.category,
-        description=payload.description,
+        category=category,
+        description=description,
+        photo_url=photo_url,
         current_status="Open",
         priority="Low",
     )
