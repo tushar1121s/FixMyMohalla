@@ -1,19 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
-import models  # models import karna zaroori hai taaki tables register hon
+import models
+from routers import auth_routes
 
 app = FastAPI(title="Society Maintenance Tracker")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # deployment ke time tighten karenge
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Startup pe tables create ho jayengi Supabase mein (agar already nahi hain)
 Base.metadata.create_all(bind=engine)
+
+app.include_router(auth_routes.router, prefix="/auth", tags=["auth"])
 
 
 @app.get("/")
