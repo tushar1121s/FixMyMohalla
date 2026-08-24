@@ -30,6 +30,7 @@ class Complaint(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     resolved_at = Column(DateTime(timezone=True), nullable=True)
 
+    resident = relationship("User", foreign_keys=[resident_id])
     history = relationship("ComplaintHistory", backref="complaint", order_by="ComplaintHistory.changed_at")
 
 

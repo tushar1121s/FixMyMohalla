@@ -163,6 +163,10 @@ def get_all_complaints(
             "resolved_at": c.resolved_at,
             "is_overdue": is_overdue,
             "is_archived": bool(c.is_archived),
+            "resident_id": c.resident_id,
+            "resident_name": c.resident.name if c.resident else "Unknown Resident",
+            "resident_flat": c.resident.flat_no if c.resident else "N/A",
+            "resident_email": c.resident.email if c.resident else "",
         })
 
     result.sort(key=lambda x: (not x["is_overdue"], -x["created_at"].timestamp()))
