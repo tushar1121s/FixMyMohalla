@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../api";
-import "./Login.css";
+import "./ResetPassword.css";
 
 function ResetPassword() {
   const { token } = useParams();
@@ -37,30 +37,30 @@ function ResetPassword() {
   };
 
   return (
-    <div className="auth-page-container">
-      <div className="verify-card" style={{ maxWidth: 440, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "36px 28px" }}>
-        <h2 className="auth-title" style={{ marginBottom: 8 }}>Set New Password</h2>
-        <p className="auth-subtitle" style={{ marginBottom: 20 }}>
+    <div className="reset-page-container">
+      <div className="reset-card">
+        <h2 className="reset-title">Set New Password</h2>
+        <p className="reset-subtitle">
           Create a new, strong password for your account.
         </p>
 
-        {error && <div className="auth-alert-error">{error}</div>}
+        {error && <div className="reset-alert-error">{error}</div>}
 
         {success ? (
           <div>
-            <div style={{ backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534", padding: 14, borderRadius: 6, fontSize: "0.88rem", marginBottom: 20 }}>
+            <div className="reset-alert-success">
               Password reset successfully! Redirecting to Sign In...
             </div>
-            <Link to="/login" className="auth-submit-btn" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>
+            <Link to="/login" className="reset-submit-btn">
               Sign In Now
             </Link>
           </div>
         ) : (
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label">New Password</label>
+          <form className="reset-form" onSubmit={handleSubmit}>
+            <div className="reset-form-group">
+              <label className="reset-form-label">New Password</label>
               <input
-                className="form-input"
+                className="reset-form-input"
                 type="password"
                 placeholder="Enter new password"
                 value={newPassword}
@@ -68,10 +68,10 @@ function ResetPassword() {
                 required
               />
             </div>
-            <div className="form-group">
-              <label className="form-label">Confirm Password</label>
+            <div className="reset-form-group">
+              <label className="reset-form-label">Confirm Password</label>
               <input
-                className="form-input"
+                className="reset-form-input"
                 type="password"
                 placeholder="Confirm new password"
                 value={confirmPassword}
@@ -79,7 +79,7 @@ function ResetPassword() {
                 required
               />
             </div>
-            <button className="auth-submit-btn" type="submit" disabled={loading}>
+            <button className="reset-submit-btn" type="submit" disabled={loading}>
               {loading ? "Updating..." : "Update Password"}
             </button>
           </form>
