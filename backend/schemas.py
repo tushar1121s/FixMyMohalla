@@ -22,6 +22,8 @@ class UserOut(BaseModel):
     email: EmailStr
     role: str
     flat_no: Optional[str] = None
+    is_verified: bool = False
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -30,6 +32,10 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: str
+
+
+class RoleUpdate(BaseModel):
     role: str
 
 
@@ -98,7 +104,7 @@ class NoticeOut(BaseModel):
         from_attributes = True
 
 
-
+# ---------- Password Recovery ----------
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 

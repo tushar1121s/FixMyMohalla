@@ -34,6 +34,7 @@ async def send_verification_email(email: str, token: str):
     """
     _send_email(email, "Verify your FixMyMohalla account", html)
 
+
 async def send_complaint_created_email(email: str, complaint_title: str, complaint_id: int):
     html = f"""
     <p>Hi,</p>
@@ -52,14 +53,16 @@ async def send_status_update_email(email: str, complaint_title: str, complaint_i
     _send_email(email, "Complaint Status Updated - FixMyMohalla", html)
 
 
-async def send_admin_notification_email(complaint_title: str, complaint_id: int, resident_email: str):
+async def send_admin_notification_email(complaint_title: str, complaint_id: int, resident_email: str, admin_email: str = None):
+    recipient = admin_email or config.NOTIFY_ADMIN_EMAIL
+    if not recipient:
+        return
     html = f"""
     <p>New complaint raised:</p>
     <p><b>{complaint_title}</b> (ID: {complaint_id})</p>
     <p>Raised by: {resident_email}</p>
     """
-    _send_email(config.NOTIFY_ADMIN_EMAIL, "New Complaint Raised - FixMyMohalla", html)
-
+    _send_email(recipient, "New Complaint Raised - FixMyMohalla", html)
 
 
 async def send_password_reset_email(email: str, token: str):

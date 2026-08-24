@@ -11,7 +11,10 @@ function statusBadgeClass(status) {
 }
 
 function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState("complaints"); // "complaints" | "members"
   const [complaints, setComplaints] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [memberSearch, setMemberSearch] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ category: "", status: "" });
@@ -34,6 +37,15 @@ function AdminDashboard() {
       .finally(() => setLoading(false));
   };
 
+  const fetchUsers = () => {
+    api
+      .get("/auth/users")
+      .then((res) => setUsers(res.data))
+      .catch((err) => {
+        console.error("Failed to load users", err);
+      });
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
@@ -42,6 +54,7 @@ function AdminDashboard() {
       return;
     }
     fetchComplaints();
+    fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -73,7 +86,7 @@ function AdminDashboard() {
   };
 
   const handleDeleteComplaint = async (id) => {
-    if (!window.confirm("Are you sure you want to archive / delete this resolved complaint?")) {
+    if (!window.confirm("Are you sure you want to archive this resolved complaint?")) {
       return;
     }
     try {
@@ -93,11 +106,34 @@ function AdminDashboard() {
     }
   };
 
+  const handleRoleChange = async (userId, userName, currentRole) => {
+    const newRole = currentRole === "admin" ? "resident" : "admin";
+    const actionText = newRole === "admin" ? "promote to Admin" : "demote to Resident";
+
+    if (!window.confirm(`Are you sure you want to ${actionText} for ${userName}?`)) {
+      return;
+    }
+
+    try {
+      await api.patch(`/auth/users/${userId}/role`, { role: newRole });
+      fetchUsers();
+    } catch (err) {
+      alert(err.response?.data?.detail || "Failed to update user role");
+    }
+  };
+
   const overdueCount = complaints.filter((c) => c.is_overdue && !c.is_archived).length;
   const activeCount = complaints.filter((c) => !c.is_archived).length;
   const resolvedCount = complaints.filter((c) => c.current_status === "Resolved" && !c.is_archived).length;
 
-  if (loading) {
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(memberSearch.toLowerCase()) ||
+      u.email.toLowerCase().includes(memberSearch.toLowerCase()) ||
+      (u.flat_no && u.flat_no.toLowerCase().includes(memberSearch.toLowerCase()))
+  );
+
+  if (loading && complaints.length === 0) {
     return <div className="dashboard-loading">Loading admin dashboard...</div>;
   }
 
@@ -107,10 +143,12 @@ function AdminDashboard() {
       <div className="admin-header">
         <div className="admin-title-wrapper">
           <div className="admin-title-row">
-            <h2 className="admin-title">Complaints Management</h2>
-            <span className="admin-badge-pill">Admin Center</span>
+            <h2 className="admin-title">Society Command Center</h2>
+            <span className="admin-badge-pill">Admin Access</span>
           </div>
-          <p className="admin-subtitle">Monitor, update status, and manage all society-wide complaints</p>
+          <p className="admin-subtitle">
+            Manage complaints triage, resolution workflows, and managing committee members
+          </p>
         </div>
         <div>
           <Link to="/notices" className="admin-notice-btn">
@@ -119,173 +157,262 @@ function AdminDashboard() {
         </div>
       </div>
 
-      {/* KPI Overview Grid */}
-      <div className="admin-kpi-grid">
-        <div className="admin-kpi-card">
-          <span className="kpi-label">Active Complaints</span>
-          <span className="kpi-value">{activeCount}</span>
-        </div>
-
-        <div className={`admin-kpi-card ${overdueCount > 0 ? "admin-kpi-card-overdue" : ""}`}>
-          <span className="kpi-label">Overdue Complaints</span>
-          <span className={`kpi-value ${overdueCount > 0 ? "kpi-value-overdue" : ""}`}>
-            {overdueCount}
-          </span>
-        </div>
-
-        <div className="admin-kpi-card">
-          <span className="kpi-label">Resolved Issues</span>
-          <span className="kpi-value">{resolvedCount}</span>
-        </div>
+      {/* Tabs Switcher */}
+      <div className="admin-tabs-nav">
+        <button
+          className={`admin-tab-btn ${activeTab === "complaints" ? "active" : ""}`}
+          onClick={() => setActiveTab("complaints")}
+        >
+          Complaints Queue ({activeCount})
+        </button>
+        <button
+          className={`admin-tab-btn ${activeTab === "members" ? "active" : ""}`}
+          onClick={() => {
+            setActiveTab("members");
+            fetchUsers();
+          }}
+        >
+          Managing Committee & Residents ({users.length})
+        </button>
       </div>
 
-      {/* Filter Bar Toolbar */}
-      <form onSubmit={handleFilterSubmit} className="admin-filter-bar">
-        <span className="filter-label-text">Filter:</span>
-        <input
-          className="filter-input"
-          type="text"
-          placeholder="Filter by category"
-          value={filters.category}
-          onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-        />
-        <select
-          className="filter-input"
-          value={filters.status}
-          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-        >
-          <option value="">All Statuses</option>
-          <option value="Open">Open</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Resolved">Resolved</option>
-        </select>
-        <label className="filter-checkbox-label">
-          <input
-            className="filter-checkbox"
-            type="checkbox"
-            checked={showArchived}
-            onChange={(e) => {
-              setShowArchived(e.target.checked);
-              fetchComplaints(e.target.checked);
-            }}
-          />
-          Show Archived
-        </label>
-        <button className="filter-submit-btn" type="submit">
-          Apply
-        </button>
-      </form>
-
-      {error && <div className="dashboard-error">{error}</div>}
-
-      {complaints.length === 0 && !error && (
-        <div className="dashboard-empty-state">
-          <h3 className="empty-state-title">No complaints found</h3>
-          <p className="empty-state-desc">No complaints match the specified filter criteria.</p>
-        </div>
-      )}
-
-      {/* Complaints Grid */}
-      <div className="admin-cards-grid">
-        {complaints.map((c) => (
-          <div
-            key={c.id}
-            className={`admin-complaint-card ${c.is_overdue ? "admin-complaint-card-overdue" : ""}`}
-          >
-            <div>
-              {/* Card Header */}
-              <div className="admin-card-header">
-                <div>
-                  <span className="admin-card-id">#{c.id}</span>
-                  <h3 className="admin-card-category">{c.category}</h3>
-                </div>
-                <div>
-                  {c.is_overdue && <span className="admin-tag-overdue">Overdue</span>}
-                  {c.is_archived && <span className="admin-tag-archived">Archived</span>}
-                </div>
-              </div>
-
-              {/* Description */}
-              <p className="admin-card-desc">{c.description}</p>
-
-              {/* Photo */}
-              {c.photo_url && (
-                <img src={c.photo_url} alt="Complaint" className="admin-card-img" />
-              )}
-
-              {/* Badges */}
-              <div className="admin-badges-row">
-                <span className={statusBadgeClass(c.current_status)}>{c.current_status}</span>
-                <span className="admin-priority-badge">Priority: {c.priority}</span>
-              </div>
+      {/* Tab 1: Complaints Management */}
+      {activeTab === "complaints" && (
+        <>
+          {/* KPI Overview Grid */}
+          <div className="admin-kpi-grid">
+            <div className="admin-kpi-card">
+              <span className="kpi-label">Active Complaints</span>
+              <span className="kpi-value">{activeCount}</span>
             </div>
 
-            {/* Admin Controls */}
-            <div className="admin-controls-box">
-              {!c.is_archived ? (
-                <>
-                  <div className="admin-dropdowns-row">
-                    <div className="control-item">
-                      <span className="control-label">Status</span>
-                      <select
-                        className="control-select"
-                        value={c.current_status}
-                        onChange={(e) => handleStatusUpdate(c.id, e.target.value)}
-                        disabled={c.current_status === "Resolved"}
-                      >
-                        <option value="Open">Open</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
-                      </select>
-                    </div>
+            <div className={`admin-kpi-card ${overdueCount > 0 ? "admin-kpi-card-overdue" : ""}`}>
+              <span className="kpi-label">Overdue Complaints</span>
+              <span className={`kpi-value ${overdueCount > 0 ? "kpi-value-overdue" : ""}`}>
+                {overdueCount}
+              </span>
+            </div>
 
-                    <div className="control-item">
-                      <span className="control-label">Priority</span>
-                      <select
-                        className="control-select"
-                        value={c.priority}
-                        onChange={(e) => handlePriorityUpdate(c.id, e.target.value)}
-                      >
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="admin-card-footer">
-                    <Link to={`/complaints/${c.id}`} className="admin-audit-link">
-                      Audit Trail →
-                    </Link>
-                    {c.current_status === "Resolved" && (
-                      <button
-                        type="button"
-                        className="admin-archive-btn"
-                        onClick={() => handleDeleteComplaint(c.id)}
-                      >
-                        Archive
-                      </button>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="admin-card-footer">
-                  <Link to={`/complaints/${c.id}`} className="admin-audit-link">
-                    Audit Trail →
-                  </Link>
-                  <button
-                    type="button"
-                    className="admin-restore-btn"
-                    onClick={() => handleRestoreComplaint(c.id)}
-                  >
-                    Restore
-                  </button>
-                </div>
-              )}
+            <div className="admin-kpi-card">
+              <span className="kpi-label">Resolved Issues</span>
+              <span className="kpi-value">{resolvedCount}</span>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Filter Bar Toolbar */}
+          <form onSubmit={handleFilterSubmit} className="admin-filter-bar">
+            <span className="filter-label-text">Filter:</span>
+            <input
+              className="filter-input"
+              type="text"
+              placeholder="Filter by category"
+              value={filters.category}
+              onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+            />
+            <select
+              className="filter-input"
+              value={filters.status}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            >
+              <option value="">All Statuses</option>
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+            </select>
+            <label className="filter-checkbox-label">
+              <input
+                className="filter-checkbox"
+                type="checkbox"
+                checked={showArchived}
+                onChange={(e) => {
+                  setShowArchived(e.target.checked);
+                  fetchComplaints(e.target.checked);
+                }}
+              />
+              Show Archived
+            </label>
+            <button className="filter-submit-btn" type="submit">
+              Apply
+            </button>
+          </form>
+
+          {error && <div className="dashboard-error">{error}</div>}
+
+          {complaints.length === 0 && !error && (
+            <div className="dashboard-empty-state">
+              <h3 className="empty-state-title">No complaints found</h3>
+              <p className="empty-state-desc">No complaints match the specified filter criteria.</p>
+            </div>
+          )}
+
+          {/* Complaints Grid */}
+          <div className="admin-cards-grid">
+            {complaints.map((c) => (
+              <div
+                key={c.id}
+                className={`admin-complaint-card ${c.is_overdue ? "admin-complaint-card-overdue" : ""}`}
+              >
+                <div>
+                  <div className="admin-card-header">
+                    <div>
+                      <span className="admin-card-id">#{c.id}</span>
+                      <h3 className="admin-card-category">{c.category}</h3>
+                    </div>
+                    <div>
+                      {c.is_overdue && <span className="admin-tag-overdue">Overdue</span>}
+                      {c.is_archived && <span className="admin-tag-archived">Archived</span>}
+                    </div>
+                  </div>
+
+                  <p className="admin-card-desc">{c.description}</p>
+
+                  {c.photo_url && (
+                    <img src={c.photo_url} alt="Complaint" className="admin-card-img" />
+                  )}
+
+                  <div className="admin-badges-row">
+                    <span className={statusBadgeClass(c.current_status)}>{c.current_status}</span>
+                    <span className="admin-priority-badge">Priority: {c.priority}</span>
+                  </div>
+                </div>
+
+                <div className="admin-controls-box">
+                  {!c.is_archived ? (
+                    <>
+                      <div className="admin-dropdowns-row">
+                        <div className="control-item">
+                          <span className="control-label">Status</span>
+                          <select
+                            className="control-select"
+                            value={c.current_status}
+                            onChange={(e) => handleStatusUpdate(c.id, e.target.value)}
+                            disabled={c.current_status === "Resolved"}
+                          >
+                            <option value="Open">Open</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                          </select>
+                        </div>
+
+                        <div className="control-item">
+                          <span className="control-label">Priority</span>
+                          <select
+                            className="control-select"
+                            value={c.priority}
+                            onChange={(e) => handlePriorityUpdate(c.id, e.target.value)}
+                          >
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="admin-card-footer">
+                        <Link to={`/complaints/${c.id}`} className="admin-audit-link">
+                          Audit Trail →
+                        </Link>
+                        {c.current_status === "Resolved" && (
+                          <button
+                            type="button"
+                            className="admin-archive-btn"
+                            onClick={() => handleDeleteComplaint(c.id)}
+                          >
+                            Archive
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="admin-card-footer">
+                      <Link to={`/complaints/${c.id}`} className="admin-audit-link">
+                        Audit Trail →
+                      </Link>
+                      <button
+                        type="button"
+                        className="admin-restore-btn"
+                        onClick={() => handleRestoreComplaint(c.id)}
+                      >
+                        Restore
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Tab 2: Society Members & Committee Management */}
+      {activeTab === "members" && (
+        <div className="members-container">
+          <div className="members-search-box">
+            <input
+              className="filter-input"
+              type="text"
+              placeholder="Search member by name, email, or flat..."
+              value={memberSearch}
+              onChange={(e) => setMemberSearch(e.target.value)}
+            />
+          </div>
+
+          <div className="members-table-wrapper">
+            <table className="members-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Member Name</th>
+                  <th>Email Address</th>
+                  <th>Flat / Unit</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((u) => (
+                  <tr key={u.id}>
+                    <td>#{u.id}</td>
+                    <td>
+                      <div className="member-name-cell">{u.name}</div>
+                    </td>
+                    <td>{u.email}</td>
+                    <td>{u.flat_no || "N/A"}</td>
+                    <td>
+                      {u.id === 1 ? (
+                        <span className="role-badge-super">Super Admin</span>
+                      ) : u.role === "admin" ? (
+                        <span className="role-badge-admin">Admin</span>
+                      ) : (
+                        <span className="role-badge-resident">Resident</span>
+                      )}
+                    </td>
+                    <td>
+                      {u.id === 1 ? (
+                        <span className="action-locked-text">Permanent Root Admin</span>
+                      ) : u.role === "admin" ? (
+                        <button
+                          className="action-demote-btn"
+                          onClick={() => handleRoleChange(u.id, u.name, u.role)}
+                        >
+                          Demote to Resident
+                        </button>
+                      ) : (
+                        <button
+                          className="action-promote-btn"
+                          onClick={() => handleRoleChange(u.id, u.name, u.role)}
+                        >
+                          Promote to Admin
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

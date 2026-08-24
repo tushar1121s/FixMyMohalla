@@ -13,11 +13,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor: agar 401 aaya, auto-logout + redirect
+// Response interceptor: agar 401 aaya (par login request nahi hai), auto-logout + redirect
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginRequest = error.config?.url?.includes("/auth/login");
+    if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
       window.location.href = "/login";

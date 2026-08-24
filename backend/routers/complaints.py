@@ -52,7 +52,26 @@ def create_complaint(
     db.commit()
 
     background_tasks.add_task(send_complaint_created_email, current_user.email, complaint.category, complaint.id)
-    background_tasks.add_task(send_admin_notification_email, complaint.category, complaint.id, current_user.email)
+    
+    # Broadcast notification to all verified admins
+    admins = db.query(User).filter(User.role == "admin", User.is_verified == True).all()
+    if admins:
+        for admin in admins:
+            background_tasks.add_task(
+                send_admin_notification_email,
+                complaint.category,
+                complaint.id,
+                current_user.email,
+                admin.email
+            )
+    else:
+        background_tasks.add_task(
+            send_admin_notification_email,
+            complaint.category,
+            complaint.id,
+            current_user.email,
+            None
+        )
 
     return complaint
 
