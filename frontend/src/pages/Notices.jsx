@@ -5,6 +5,7 @@ import "./Notices.css";
 
 function Notices() {
   const [notices, setNotices] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
@@ -60,6 +61,15 @@ function Notices() {
     }
   };
 
+  const filteredNotices = notices.filter(
+    (n) =>
+      n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      n.body.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const pinnedNotices = filteredNotices.filter((n) => n.is_important);
+  const regularNotices = filteredNotices.filter((n) => !n.is_important);
+
   if (loading) {
     return <div className="dashboard-loading">Loading notice board...</div>;
   }
@@ -68,9 +78,9 @@ function Notices() {
     <div className="notices-page-container">
       {/* Header */}
       <div className="notices-header">
-        <div>
+        <div className="notices-title-group">
           <h2 className="notices-title">Society Notice Board</h2>
-          <p className="notices-subtitle">Official announcements, updates, and maintenance schedules</p>
+          <p className="notices-subtitle">Official announcements, updates, and maintenance circulars</p>
         </div>
         <div>
           {role === "admin" && (
@@ -127,7 +137,7 @@ function Notices() {
                 checked={isImportant}
                 onChange={(e) => setIsImportant(e.target.checked)}
               />
-              Mark as High-Priority / Important (Pins notice with badge)
+              Mark as High-Priority / Important (Pins notice with priority highlight)
             </label>
 
             <div className="notice-form-actions">
@@ -148,6 +158,19 @@ function Notices() {
 
       {error && <div className="dashboard-error">{error}</div>}
 
+      {/* Search Bar */}
+      {notices.length > 0 && (
+        <div className="notices-search-bar">
+          <input
+            className="notices-search-input"
+            type="text"
+            placeholder="Search circulars and announcements..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      )}
+
       {notices.length === 0 && !error && (
         <div className="dashboard-empty-state">
           <h3 className="empty-state-title">No notices published</h3>
@@ -155,29 +178,82 @@ function Notices() {
         </div>
       )}
 
-      {/* Notices Feed */}
-      <div className="notices-feed">
-        {notices.map((n) => (
-          <div
-            key={n.id}
-            className={`notice-item-card ${n.is_important ? "notice-item-important" : ""}`}
-          >
-            <div className="notice-item-top">
-              <h3 className="notice-item-title">{n.title}</h3>
-              {n.is_important && <span className="notice-important-badge">Important</span>}
-            </div>
+      {/* Pinned / Important Section */}
+      {pinnedNotices.length > 0 && (
+        <div>
+          <h3 className="notices-section-title">
+            Important Circulars <span className="section-pill-count">{pinnedNotices.length}</span>
+          </h3>
+          <div className="notices-feed">
+            {pinnedNotices.map((n) => (
+              <div key={n.id} className="notice-item-card notice-item-important">
+                <div className="notice-item-top">
+                  <h3 className="notice-item-title">{n.title}</h3>
+                  <div className="notice-item-header-meta">
+                    <span className="notice-official-tag">Official</span>
+                    <span className="notice-important-badge">Priority</span>
+                  </div>
+                </div>
 
-            <p className="notice-item-body">{n.body}</p>
+                <p className="notice-item-body">{n.body}</p>
 
-            <div className="notice-item-footer">
-              <span>
-                Posted on {new Date(n.created_at).toLocaleDateString()} at{" "}
-                {new Date(n.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </span>
-            </div>
+                <div className="notice-item-footer">
+                  <span className="notice-source-label">Society Administration</span>
+                  <span className="notice-date-time">
+                    {new Date(n.created_at).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}{" "}
+                    ·{" "}
+                    {new Date(n.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Regular Notices Section */}
+      {regularNotices.length > 0 && (
+        <div>
+          {pinnedNotices.length > 0 && (
+            <h3 className="notices-section-title">General Announcements</h3>
+          )}
+          <div className="notices-feed">
+            {regularNotices.map((n) => (
+              <div key={n.id} className="notice-item-card">
+                <div className="notice-item-top">
+                  <h3 className="notice-item-title">{n.title}</h3>
+                  <span className="notice-official-tag">Official</span>
+                </div>
+
+                <p className="notice-item-body">{n.body}</p>
+
+                <div className="notice-item-footer">
+                  <span className="notice-source-label">Society Administration</span>
+                  <span className="notice-date-time">
+                    {new Date(n.created_at).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}{" "}
+                    ·{" "}
+                    {new Date(n.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
