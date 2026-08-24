@@ -13,6 +13,17 @@ function formatRelativeTime(dateString) {
   return `${diffDays} days ago`;
 }
 
+function formatUnitString(flatNo) {
+  if (!flatNo || flatNo.trim() === "" || flatNo.toLowerCase() === "n/a") {
+    return "Unit: Unassigned";
+  }
+  const clean = flatNo.trim();
+  if (clean.toLowerCase().startsWith("flat") || clean.toLowerCase().startsWith("unit") || clean.toLowerCase().startsWith("tower")) {
+    return clean;
+  }
+  return `Flat ${clean}`;
+}
+
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("complaints"); // "complaints" | "members"
   const [complaints, setComplaints] = useState([]);
@@ -21,7 +32,7 @@ function AdminDashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [showArchived, setShowArchived] = useState(false);
-  const [activeImage, setActiveImage] = useState(null); // Lightbox modal
+  const [activeImage, setActiveImage] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -133,7 +144,8 @@ function AdminDashboard() {
       c.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.resident_name && c.resident_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (c.resident_flat && c.resident_flat.toLowerCase().includes(searchQuery.toLowerCase()));
+      (c.resident_flat && c.resident_flat.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (c.resident_email && c.resident_email.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesCategory = !selectedCategory || c.category === selectedCategory;
     const matchesStatus = !selectedStatus || c.current_status === selectedStatus;
@@ -153,15 +165,15 @@ function AdminDashboard() {
 
   return (
     <div className="admin-page-container">
-      {/* Executive Header */}
-      <div className="admin-header">
+      {/* Executive Command Header Banner */}
+      <div className="admin-header-banner">
         <div>
           <div className="admin-title-row">
-            <h2 className="admin-title">Society Operations Command Center</h2>
-            <span className="admin-badge-pill">Executive Console</span>
+            <h2 className="admin-header-title">Society Operations Command Center</h2>
+            <span className="admin-console-pill">Executive Console</span>
           </div>
-          <p className="admin-subtitle">
-            Centralized grievance triage, multi-admin role management, and service resolution tracking
+          <p className="admin-header-subtitle">
+            Centralized grievance triage, multi-admin role management, and SLA resolution tracking
           </p>
         </div>
         <div>
@@ -199,7 +211,7 @@ function AdminDashboard() {
           ======================================================== */}
       {activeTab === "complaints" && (
         <>
-          {/* KPI Summary Widgets */}
+          {/* KPI Summary Grid with Top Color Accents */}
           <div className="admin-kpi-grid">
             <div className="admin-kpi-card">
               <span className="kpi-label">Active Tickets</span>
@@ -213,12 +225,12 @@ function AdminDashboard() {
               </span>
             </div>
 
-            <div className="admin-kpi-card">
+            <div className="admin-kpi-card admin-kpi-card-resolved">
               <span className="kpi-label">Resolved Issues</span>
               <span className="kpi-value">{resolvedCount}</span>
             </div>
 
-            <div className="admin-kpi-card">
+            <div className="admin-kpi-card admin-kpi-card-efficiency">
               <span className="kpi-label">Resolution Efficiency</span>
               <span className="kpi-value">{resolutionRate}%</span>
             </div>
@@ -230,7 +242,7 @@ function AdminDashboard() {
               <input
                 className="admin-search-input"
                 type="text"
-                placeholder="Search ticket, category, resident, or unit..."
+                placeholder="Search ticket, category, resident, unit, or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -295,7 +307,7 @@ function AdminDashboard() {
               <tbody>
                 {filteredComplaints.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "32px", color: "#64748b" }}>
+                    <td colSpan="7" style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                       No tickets matching specified filter criteria.
                     </td>
                   </tr>
@@ -330,9 +342,13 @@ function AdminDashboard() {
                       {/* Resident & Flat */}
                       <td>
                         <div className="col-resident-cell">
-                          <div className="resident-name-text">{c.resident_name}</div>
+                          <div className="resident-name-text">
+                            {c.resident_name && c.resident_name !== "Unknown Resident"
+                              ? c.resident_name
+                              : c.resident_email || `Resident #${c.resident_id || c.id}`}
+                          </div>
                           <div className="resident-flat-text">
-                            {c.resident_flat ? `Flat ${c.resident_flat}` : "Unit N/A"}
+                            {formatUnitString(c.resident_flat)}
                           </div>
                         </div>
                       </td>
@@ -454,7 +470,7 @@ function AdminDashboard() {
               <tbody>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={{ textAlign: "center", padding: "32px", color: "#64748b" }}>
+                    <td colSpan="6" style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                       No members found matching query.
                     </td>
                   </tr>
@@ -466,7 +482,7 @@ function AdminDashboard() {
                         <div className="resident-name-text">{u.name}</div>
                       </td>
                       <td>{u.email}</td>
-                      <td>{u.flat_no || "N/A"}</td>
+                      <td>{formatUnitString(u.flat_no)}</td>
                       <td>
                         {u.id === 1 ? (
                           <span className="role-badge-super">Super Admin</span>
