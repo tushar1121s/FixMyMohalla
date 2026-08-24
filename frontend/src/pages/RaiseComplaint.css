@@ -1,8 +1,8 @@
 /* ===================================================
-   Raise Complaint Styles - Variable-Driven & Minimal
+   Raise Complaint Styles - 100% Matching RaiseComplaint.jsx
    =================================================== */
 
-.raise-container {
+.raise-complaint-page {
   max-width: 680px;
   margin: 0 auto;
   padding: 32px 20px 64px;
@@ -24,7 +24,7 @@
   color: var(--text-primary);
 }
 
-.raise-form-card {
+.raise-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
@@ -46,29 +46,72 @@
 .raise-subtitle {
   font-size: 0.88rem;
   color: var(--text-muted);
+  line-height: 1.5;
 }
 
 .raise-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-.form-group {
+.raise-form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
-.form-label {
-  font-size: 0.82rem;
+.raise-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.raise-label {
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--text-secondary);
 }
 
-.form-input,
-.form-select,
-.form-textarea {
+.raise-char-count {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+/* Category Chips */
+.category-chips-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-chip-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.category-chip-btn:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+.category-chip-btn.active {
+  background-color: var(--accent-btn-bg);
+  color: var(--accent-btn-text);
+  border-color: var(--accent-btn-bg);
+  font-weight: 700;
+}
+
+/* Inputs & Textareas */
+.raise-input {
   width: 100%;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -80,111 +123,83 @@
   transition: all 0.15s ease;
 }
 
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
+.raise-input:focus {
   outline: none;
   border-color: var(--border-focus);
   box-shadow: 0 0 0 1px var(--border-focus);
 }
 
-.form-textarea {
-  min-height: 110px;
+.raise-textarea {
+  min-height: 120px;
   resize: vertical;
 }
 
-/* Category Quick Presets */
-.category-preset-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
+/* File Upload & Preview */
+.raise-file-input {
+  padding: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background-color: var(--bg-input);
+  border: 1px dashed var(--border-input);
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-.preset-chip-btn {
-  padding: 5px 11px;
-  font-size: 0.78rem;
-  font-weight: 600;
+.photo-preview-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.preview-thumbnail {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background-color: var(--bg-card-subtle);
-  color: var(--text-secondary);
+}
+
+.preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.preview-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.preview-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.preview-remove-btn {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e11d48;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.preset-chip-btn:hover {
-  background-color: var(--bg-card-hover);
-  color: var(--text-primary);
-  border-color: var(--border-input);
+.preview-remove-btn:hover {
+  background-color: #ffe4e6;
+  border-color: #fecdd3;
 }
 
-.preset-chip-btn.active {
-  background-color: var(--accent-btn-bg);
-  color: var(--accent-btn-text);
-  border-color: var(--accent-btn-bg);
-}
-
-/* File Upload Area */
-.file-upload-box {
-  border: 1px dashed var(--border-input);
-  border-radius: 6px;
-  padding: 18px;
-  text-align: center;
-  background-color: var(--bg-card-subtle);
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-
-.file-upload-box:hover {
-  border-color: var(--border-focus);
-}
-
-.file-input-hidden {
-  display: none;
-}
-
-.upload-instruction {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.upload-instruction-strong {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.image-preview-wrapper {
-  margin-top: 10px;
-  position: relative;
-  display: inline-block;
-}
-
-.image-preview-thumb {
-  max-width: 140px;
-  max-height: 100px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-}
-
-.remove-img-btn {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: #e11d48;
-  color: #ffffff;
-  border: none;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 0.72rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Submit Button */
+/* Submit Button & Alert */
 .raise-submit-btn {
   width: 100%;
   padding: 11px 16px;
@@ -207,4 +222,15 @@
 .raise-submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.raise-alert-error {
+  background-color: var(--badge-open-bg);
+  border: 1px solid var(--badge-open-border);
+  color: var(--badge-open-text);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 16px;
 }
