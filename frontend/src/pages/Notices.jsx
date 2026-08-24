@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
+import "./Notices.css";
 
 function Notices() {
   const [notices, setNotices] = useState([]);
@@ -10,6 +11,8 @@ function Notices() {
   const [body, setBody] = useState("");
   const [isImportant, setIsImportant] = useState(false);
   const [postError, setPostError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const navigate = useNavigate();
 
   const role = localStorage.getItem("role");
@@ -38,6 +41,7 @@ function Notices() {
   const handlePostNotice = async (e) => {
     e.preventDefault();
     setPostError("");
+    setSubmitting(true);
     try {
       await api.post("/notices/", {
         title,
@@ -47,69 +51,133 @@ function Notices() {
       setTitle("");
       setBody("");
       setIsImportant(false);
+      setShowCreateForm(false);
       fetchNotices();
     } catch (err) {
       setPostError(err.response?.data?.detail || "Failed to post notice");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  if (loading) return <p className="page-container">Loading...</p>;
+  if (loading) {
+    return <div className="dashboard-loading">Loading notice board...</div>;
+  }
 
   return (
-    <div className="page-container">
-      <Link className="back-link" to={role === "admin" ? "/admin" : "/dashboard"}>← Back</Link>
-      <h2>Notice Board</h2>
+    <div className="notices-page-container">
+      {/* Header */}
+      <div className="notices-header">
+        <div>
+          <h2 className="notices-title">Society Notice Board</h2>
+          <p className="notices-subtitle">Official announcements, updates, and maintenance schedules</p>
+        </div>
+        <div>
+          {role === "admin" && (
+            <button
+              className="notice-create-toggle-btn"
+              onClick={() => setShowCreateForm(!showCreateForm)}
+            >
+              {showCreateForm ? "Cancel" : "+ Publish Notice"}
+            </button>
+          )}
+        </div>
+      </div>
 
-      {role === "admin" && (
-        <form onSubmit={handlePostNotice} className="card notice-form">
-          <h3>Post New Notice</h3>
-          {postError && <p className="alert-error">{postError}</p>}
-          <input
-            className="input"
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          <textarea
-            className="input"
-            placeholder="Notice body"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            required
-            rows={3}
-          />
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={isImportant}
-              onChange={(e) => setIsImportant(e.target.checked)}
-            />
-            Mark as Important
-          </label>
-          <button className="btn btn-primary" type="submit">Post Notice</button>
-        </form>
+      {/* Admin Publish Notice Form */}
+      {role === "admin" && showCreateForm && (
+        <div className="notice-form-card">
+          <h3 className="notice-form-heading">Publish New Notice</h3>
+          {postError && <div className="dashboard-error">{postError}</div>}
+          <form className="notice-form" onSubmit={handlePostNotice}>
+            <div className="notice-form-group">
+              <label className="notice-form-label" htmlFor="notice-title">
+                Notice Title
+              </label>
+              <input
+                id="notice-title"
+                className="notice-input"
+                type="text"
+                placeholder="e.g. Water Tank Cleaning on Sunday"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="notice-form-group">
+              <label className="notice-form-label" htmlFor="notice-body">
+                Notice Details
+              </label>
+              <textarea
+                id="notice-body"
+                className="notice-input notice-textarea"
+                placeholder="Write full details about the notice..."
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                required
+                rows={4}
+              />
+            </div>
+
+            <label className="notice-checkbox-wrapper">
+              <input
+                className="notice-checkbox"
+                type="checkbox"
+                checked={isImportant}
+                onChange={(e) => setIsImportant(e.target.checked)}
+              />
+              Mark as High-Priority / Important (Pins notice with badge)
+            </label>
+
+            <div className="notice-form-actions">
+              <button className="notice-submit-btn" type="submit" disabled={submitting}>
+                {submitting ? "Publishing..." : "Publish Notice"}
+              </button>
+              <button
+                type="button"
+                className="notice-cancel-btn"
+                onClick={() => setShowCreateForm(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
-      {error && <p className="alert-error">{error}</p>}
-      {notices.length === 0 && !error && <p className="text-muted">No notices yet.</p>}
+      {error && <div className="dashboard-error">{error}</div>}
 
-      {notices.map((n) => (
-        <div
-          key={n.id}
-          className={`card ${n.is_important ? "notice-card-important" : ""}`}
-        >
-          <p>
-            <strong>{n.title}</strong>{" "}
-            {n.is_important && <span className="important-tag">(Important)</span>}
-          </p>
-          <p>{n.body}</p>
-          <p className="notice-timestamp">
-            {new Date(n.created_at).toLocaleString()}
-          </p>
+      {notices.length === 0 && !error && (
+        <div className="dashboard-empty-state">
+          <h3 className="empty-state-title">No notices published</h3>
+          <p className="empty-state-desc">The society notice board is currently clear.</p>
         </div>
-      ))}
+      )}
+
+      {/* Notices Feed */}
+      <div className="notices-feed">
+        {notices.map((n) => (
+          <div
+            key={n.id}
+            className={`notice-item-card ${n.is_important ? "notice-item-important" : ""}`}
+          >
+            <div className="notice-item-top">
+              <h3 className="notice-item-title">{n.title}</h3>
+              {n.is_important && <span className="notice-important-badge">Important</span>}
+            </div>
+
+            <p className="notice-item-body">{n.body}</p>
+
+            <div className="notice-item-footer">
+              <span>
+                Posted on {new Date(n.created_at).toLocaleDateString()} at{" "}
+                {new Date(n.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: import.meta.env.VITE_API_URL || "https://fixmymohalla.onrender.com",
 });
 
-// Request interceptor: har request ke saath JWT token attach karo (agar hai to)
+// Request interceptor: har request ke saath JWT token attach karo
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -13,7 +13,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor: agar 401 aaya (expired/invalid token), auto-logout + redirect
+// Response interceptor: agar 401 aaya, auto-logout + redirect
 api.interceptors.response.use(
   (response) => response,
   (error) => {

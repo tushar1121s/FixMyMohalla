@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api";
+import "./VerifyEmail.css";
 
 function VerifyEmail() {
   const { token } = useParams();
@@ -12,31 +13,44 @@ function VerifyEmail() {
       try {
         const res = await api.get(`/auth/verify/${token}`);
         setStatus("success");
-        setMessage(res.data.message);
+        setMessage(res.data.message || "Email verified successfully!");
       } catch (err) {
         setStatus("error");
-        setMessage(err.response?.data?.detail || "Verification failed");
+        setMessage(err.response?.data?.detail || "Verification failed or token expired.");
       }
     };
     verify();
   }, [token]);
 
   return (
-    <div className="auth-container card">
-      <h2>Email Verification</h2>
-      {status === "verifying" && <p className="verify-status">Verifying your email...</p>}
-      {status === "success" && (
-        <>
-          <p>{message}</p>
-          <Link to="/login" className="btn btn-primary">Go to Login</Link>
-        </>
-      )}
-      {status === "error" && (
-        <>
-          <p className="alert-error">{message}</p>
-          <Link to="/login" className="btn btn-primary">Go to Login</Link>
-        </>
-      )}
+    <div className="verify-page-container">
+      <div className="verify-card">
+        <h2 className="verify-title">Email Verification</h2>
+
+        {status === "verifying" && (
+          <p className="verify-desc">
+            Please wait while your email address is being verified...
+          </p>
+        )}
+
+        {status === "success" && (
+          <>
+            <div className="verify-alert-success">{message}</div>
+            <Link to="/login" className="verify-btn">
+              Proceed to Sign In
+            </Link>
+          </>
+        )}
+
+        {status === "error" && (
+          <>
+            <div className="verify-alert-error">{message}</div>
+            <Link to="/login" className="verify-btn">
+              Back to Sign In
+            </Link>
+          </>
+        )}
+      </div>
     </div>
   );
 }

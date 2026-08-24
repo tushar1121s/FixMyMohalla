@@ -25,7 +25,7 @@ def _send_email(to_email: str, subject: str, html_content: str):
 
 
 async def send_verification_email(email: str, token: str):
-    verify_link = f"https://fix-my-mohalla.vercel.app/verify/{token}"
+    verify_link = f"{config.FRONTEND_URL}/verify/{token}"
     html = f"""
     <p>Welcome to FixMyMohalla!</p>
     <p>Please click the link below to verify your email address:</p>
@@ -33,7 +33,6 @@ async def send_verification_email(email: str, token: str):
     <p>This link will expire in 24 hours.</p>
     """
     _send_email(email, "Verify your FixMyMohalla account", html)
-
 
 async def send_complaint_created_email(email: str, complaint_title: str, complaint_id: int):
     html = f"""

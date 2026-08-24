@@ -16,3 +16,5 @@ MAIL_FROM = os.getenv("MAIL_FROM")
 MAIL_FROM_NAME = os.getenv("MAIL_FROM_NAME", "FixMyMohalla")
 
 NOTIFY_ADMIN_EMAIL = os.getenv("NOTIFY_ADMIN_EMAIL")
+
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://fix-my-mohalla.vercel.app")

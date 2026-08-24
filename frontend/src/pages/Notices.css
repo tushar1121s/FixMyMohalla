@@ -1,0 +1,232 @@
+.notices-page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.notices-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.notices-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.notices-subtitle {
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.notice-create-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
+  background-color: #0f172a;
+  border: 1px solid #0f172a;
+  color: #ffffff !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.notice-create-toggle-btn:hover {
+  background-color: #1e293b;
+}
+
+/* Admin Create Notice Form */
+.notice-form-card {
+  background: #ffffff;
+  border: 1px solid #0f172a;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.notice-form-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 18px;
+}
+
+.notice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notice-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notice-form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.notice-input {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: #0f172a;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.notice-input:focus {
+  outline: none;
+  border-color: #0f172a;
+}
+
+.notice-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.notice-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #334155;
+  user-select: none;
+}
+
+.notice-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #0f172a;
+  cursor: pointer;
+}
+
+.notice-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.notice-submit-btn {
+  padding: 9px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0f172a;
+  border: 1px solid #0f172a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.notice-submit-btn:hover {
+  background-color: #1e293b;
+}
+
+.notice-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.notice-cancel-btn {
+  padding: 9px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #64748b;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.notice-cancel-btn:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Notices Feed */
+.notices-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notice-item-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.notice-item-important {
+  border-left: 4px solid #f59e0b;
+  background: #fffdfa;
+}
+
+.notice-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.notice-item-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.notice-important-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #92400e;
+  background-color: #fef3c7;
+  border: 1px solid #fde68a;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.notice-item-body {
+  color: #334155;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-bottom: 16px;
+}
+
+.notice-item-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
