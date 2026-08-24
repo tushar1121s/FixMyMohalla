@@ -190,20 +190,20 @@ function AdminDashboard() {
 
   return (
     <div className="admin-page-container">
-      {/* Executive Command Header Banner */}
+      {/* Minimal Clean Header Banner */}
       <div className="admin-header-banner">
         <div>
           <div className="admin-title-row">
-            <h2 className="admin-header-title">Society Operations Command Center</h2>
-            <span className="admin-console-pill">Executive Console</span>
+            <h2 className="admin-header-title">Admin Dashboard</h2>
+            <span className="admin-console-pill">Admin</span>
           </div>
           <p className="admin-header-subtitle">
-            Centralized grievance triage, multi-admin role management, and SLA resolution tracking
+            Manage complaints, track resolutions, and manage society members.
           </p>
         </div>
         <div>
           <Link to="/notices" className="admin-notice-btn">
-            Notice Board Circulars →
+            Notice Board →
           </Link>
         </div>
       </div>
