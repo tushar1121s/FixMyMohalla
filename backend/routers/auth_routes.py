@@ -88,6 +88,49 @@ def reset_password(data: schemas.ResetPasswordRequest, db: Session = Depends(get
     return {"message": "Password reset successfully. You can now sign in."}
 
 
+# ---------- Account / Profile Endpoints (Both Admin & Resident) ----------
+
+@router.get("/me", response_model=schemas.UserOut)
+def get_my_profile(current_user: models.User = Depends(auth.get_current_user)):
+    """Fetch profile data of the currently authenticated user."""
+    return current_user
+
+
+@router.patch("/me", response_model=schemas.UserOut)
+def update_my_profile(
+    data: schemas.ProfileUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Update name and flat/unit number for current user."""
+    if data.name and data.name.strip():
+        current_user.name = data.name.strip()
+    if data.flat_no is not None:
+        current_user.flat_no = data.flat_no.strip() if data.flat_no else None
+
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+
+@router.post("/change-password")
+def change_password(
+    data: schemas.ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Securely change password using current password validation."""
+    if not auth.verify_password(data.current_password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters long")
+
+    current_user.password_hash = auth.hash_password(data.new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}
+
+
 # ---------- Committee & Role Management (Admin Protected) ----------
 
 @router.get("/users", response_model=list[schemas.UserOut])

@@ -39,6 +39,16 @@ class RoleUpdate(BaseModel):
     role: str
 
 
+class ProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    flat_no: Optional[str] = None
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
 # ---------- Complaint ----------
 class ComplaintCreate(BaseModel):
     category: str

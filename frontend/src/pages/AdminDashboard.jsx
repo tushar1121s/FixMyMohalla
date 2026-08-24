@@ -10,7 +10,7 @@ function formatRelativeTime(dateString) {
   const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
   if (diffDays === 0) return "Today";
   if (diffDays === 1) return "Yesterday";
-  return `${diffDays} days ago`;
+  return `${diffDays}d ago`;
 }
 
 function formatUnitString(flatNo) {
@@ -24,12 +24,14 @@ function formatUnitString(flatNo) {
   return `Flat ${clean}`;
 }
 
+const PRIORITY_WEIGHT = { High: 3, Medium: 2, Low: 1 };
+
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("complaints"); // "complaints" | "members"
   const [complaints, setComplaints] = useState([]);
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortBy, setSortBy] = useState("priority-high"); // default sorting
   const [selectedStatus, setSelectedStatus] = useState("");
   const [showArchived, setShowArchived] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
@@ -147,10 +149,35 @@ function AdminDashboard() {
       (c.resident_flat && c.resident_flat.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (c.resident_email && c.resident_email.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesCategory = !selectedCategory || c.category === selectedCategory;
     const matchesStatus = !selectedStatus || c.current_status === selectedStatus;
 
-    return matchesSearch && matchesCategory && matchesStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Dynamic Priority-Based & Custom Sorting
+  const sortedComplaints = [...filteredComplaints].sort((a, b) => {
+    if (sortBy === "priority-high") {
+      const weightA = PRIORITY_WEIGHT[a.priority] || 1;
+      const weightB = PRIORITY_WEIGHT[b.priority] || 1;
+      if (weightB !== weightA) {
+        return weightB - weightA; // High to Low
+      }
+      // Tie-breaker: Who complained before comes on top (Oldest created_at first)
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+    if (sortBy === "date-oldest") {
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+    if (sortBy === "date-newest") {
+      return new Date(b.created_at) - new Date(a.created_at);
+    }
+    if (sortBy === "flat") {
+      return (a.resident_flat || "").localeCompare(b.resident_flat || "");
+    }
+    if (sortBy === "id") {
+      return a.id - b.id;
+    }
+    return 0;
   });
 
   // Filtered Members for Committee Table
@@ -160,8 +187,6 @@ function AdminDashboard() {
       u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (u.flat_no && u.flat_no.toLowerCase().includes(searchQuery.toLowerCase()))
   );
-
-  const categories = Array.from(new Set(complaints.map((c) => c.category)));
 
   return (
     <div className="admin-page-container">
@@ -211,7 +236,7 @@ function AdminDashboard() {
           ======================================================== */}
       {activeTab === "complaints" && (
         <>
-          {/* KPI Summary Grid with Top Color Accents */}
+          {/* KPI Summary Grid with Refined Micro-Borders */}
           <div className="admin-kpi-grid">
             <div className="admin-kpi-card">
               <span className="kpi-label">Active Tickets</span>
@@ -242,24 +267,24 @@ function AdminDashboard() {
               <input
                 className="admin-search-input"
                 type="text"
-                placeholder="Search ticket, category, resident, unit, or email..."
+                placeholder="Search ticket, issue description, resident, flat, or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             <div className="admin-filter-group">
+              <span className="filter-sort-label">Sort by:</span>
               <select
                 className="admin-select-filter"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
               >
-                <option value="">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
+                <option value="priority-high">Priority (High → Low)</option>
+                <option value="date-oldest">Date Raised (Oldest First / FIFO)</option>
+                <option value="date-newest">Date Raised (Newest First)</option>
+                <option value="flat">Flat / Room No</option>
+                <option value="id">Ticket ID (#)</option>
               </select>
 
               <select
@@ -305,14 +330,14 @@ function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {filteredComplaints.length === 0 ? (
+                {sortedComplaints.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
+                    <td colSpan="7" style={{ textAlign: "center", padding: "36px", color: "#71717a" }}>
                       No tickets matching specified filter criteria.
                     </td>
                   </tr>
                 ) : (
-                  filteredComplaints.map((c) => (
+                  sortedComplaints.map((c) => (
                     <tr key={c.id} className={c.is_overdue ? "row-overdue" : ""}>
                       {/* Ticket & Photo Thumb */}
                       <td>
@@ -381,13 +406,19 @@ function AdminDashboard() {
                       <td>
                         {!c.is_archived ? (
                           <select
-                            className="ops-select-priority"
+                            className={`ops-select-priority ${
+                              c.priority === "High"
+                                ? "priority-high"
+                                : c.priority === "Medium"
+                                ? "priority-medium"
+                                : "priority-low"
+                            }`}
                             value={c.priority}
                             onChange={(e) => handlePriorityUpdate(c.id, e.target.value)}
                           >
-                            <option value="Low">Low</option>
-                            <option value="Medium">Medium</option>
                             <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
                           </select>
                         ) : (
                           <span className="sla-age-text">{c.priority}</span>
@@ -470,7 +501,7 @@ function AdminDashboard() {
               <tbody>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
+                    <td colSpan="6" style={{ textAlign: "center", padding: "36px", color: "#71717a" }}>
                       No members found matching query.
                     </td>
                   </tr>

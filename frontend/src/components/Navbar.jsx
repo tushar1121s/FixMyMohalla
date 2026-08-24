@@ -66,7 +66,7 @@ function Navbar() {
         </nav>
       </div>
 
-      {/* Right Side: Role Badge & Logout */}
+      {/* Right Side: Role Badge, Account Link & Logout */}
       <div className="navbar-actions">
         <span
           className={`navbar-role-tag ${
@@ -75,6 +75,13 @@ function Navbar() {
         >
           {role === "admin" ? "Admin" : "Resident"}
         </span>
+
+        <Link
+          to="/profile"
+          className={`navbar-account-link ${location.pathname === "/profile" ? "active" : ""}`}
+        >
+          Account
+        </Link>
 
         <button className="navbar-logout-btn" onClick={handleLogout} title="Log out">
           Log out
