@@ -29,6 +29,24 @@ def create_access_token(data: dict, expires_delta: timedelta = timedelta(days=7)
     return encoded_jwt
 
 
+def create_verification_token(email: str, expires_delta: timedelta = timedelta(hours=24)):
+    to_encode = {"sub": email, "type": "email_verification"}
+    expire = datetime.utcnow() + expires_delta
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, config.JWT_SECRET, algorithm=config.JWT_ALGORITHM)
+    return encoded_jwt
+
+
+def verify_verification_token(token: str):
+    try:
+        payload = jwt.decode(token, config.JWT_SECRET, algorithms=[config.JWT_ALGORITHM])
+        if payload.get("type") != "email_verification":
+            return None
+        return payload.get("sub")  # returns email
+    except JWTError:
+        return None
+
+
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
