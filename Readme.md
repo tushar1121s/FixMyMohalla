@@ -2,7 +2,7 @@
 
 # FixMyMohalla
 
-**Enterprise-Grade Society Maintenance & Grievance Redressal Platform**
+**Enterprise-Grade Residential Society Maintenance & Grievance Redressal Platform**
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB.svg?style=flat-square&logo=react&logoColor=black)](https://react.dev)
@@ -11,7 +11,7 @@
 [![Brevo](https://img.shields.io/badge/Email-Brevo%20Transactional-0B99FF.svg?style=flat-square&logo=sendinblue&logoColor=white)](https://brevo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-*A full-stack, auditable workflow system replacing unstructured chat groups and paper registers with role-based ticket management, photo proof verification, real-time status progression, and automated transactional email alerts.*
+*A production-grade, auditable workflow system replacing unstructured WhatsApp groups and physical logbooks with role-based ticket management, evidence photo verification, multi-admin committee escalation, dynamic priority scheduling, and automated transactional email workflows.*
 
 </div>
 
@@ -19,320 +19,330 @@
 
 ## 📑 Table of Contents
 
-- [Platform Overview](#platform-overview)
-- [System Architecture](#system-architecture)
-- [Key Features & Role Workflows](#key-features--role-workflows)
-  - [Resident Workflow](#resident-workflow)
-  - [Administration Workflow](#administration-workflow)
-- [Technology Stack](#technology-stack)
-- [Repository Structure](#repository-structure)
-- [Local Development Setup](#local-development-setup)
+- [Platform Overview](#-platform-overview)
+- [System Architecture](#-system-architecture)
+- [Key Features & Role Workflows](#-key-features--role-workflows)
+  - [Resident Experience](#1-resident-experience)
+  - [Society Operations & Admin Console](#2-society-operations--admin-console)
+  - [Super Admin Security & Committee Management](#3-super-admin-security--committee-management)
+  - [Design System & Studio Dark Mode](#4-design-system--studio-dark-mode)
+- [Technology Stack](#-technology-stack)
+- [Repository Structure](#-repository-structure)
+- [Local Development Setup](#-local-development-setup)
   - [Prerequisites](#prerequisites)
   - [1. Backend Setup](#1-backend-setup)
   - [2. Frontend Setup](#2-frontend-setup)
-- [REST API Specification](#rest-api-specification)
-  - [Authentication & Recovery](#1-authentication--recovery)
-  - [Complaints Management](#2-complaints-management)
+- [Environment Configuration Reference](#-environment-configuration-reference)
+- [REST API Specification](#-rest-api-specification)
+  - [Authentication, Profile & RBAC](#1-authentication-profile--rbac)
+  - [Complaints Operations](#2-complaints-operations)
   - [Notice Board](#3-notice-board)
-  - [Analytics & Metrics](#4-analytics--metrics)
-- [Database Schema & Security Architecture](#database-schema--security-architecture)
-- [Production Deployment Guide](#production-deployment-guide)
+  - [Metrics & Analytics](#4-metrics--analytics)
+- [Database Schema & Security Architecture](#-database-schema--security-architecture)
+- [Production Deployment Guide](#-production-deployment-guide)
   - [Backend Deployment (Render)](#backend-deployment-render)
   - [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
-- [Troubleshooting & FAQ](#troubleshooting--faq)
-- [Author](#author)
-- [License](#license)
+- [Author](#-author)
+- [License](#-license)
 
 ---
 
-## Platform Overview
+## 🌟 Platform Overview
 
-Residential communities often struggle with maintenance tracking due to fragmented communication across instant messaging apps and handwritten security logs. Critical issues get buried, responsibility remains ambiguous, and historical maintenance logs are lost.
+Residential societies frequently struggle with grievance handling due to chaotic instant-messaging chats, lack of status accountability, unorganized photo attachments, and lost records.
 
-**FixMyMohalla** provides a centralized, transparent platform engineered to enforce accountability:
+**FixMyMohalla** provides a high-reliability, transparent operating system for apartment complexes and gated societies:
 
-- **Immutable Audit Trails**: Every status transition (`Open` → `In Progress` → `Resolved`), priority change, and administrative remark is permanently logged with timestamps and user identifiers.
-- **Automated Lifecycle Notifications**: Integrated with Brevo Transactional Email to deliver real-time notifications for account verification, ticket creation, status changes, and secure password recovery.
-- **Overdue Resolution Engine**: Time-based SLA tracking flags complaints exceeding the resolution threshold, automatically prioritizing them on administrative dashboards.
-- **Controlled Archival Workflow**: Resolved complaints are locked against arbitrary modifications and can be safely archived/restored by administrators without data loss.
+- **Immutable Audit Trails**: Every status transition (`Open` → `In Progress` → `Resolved`), priority modification, and administrative remark is permanently logged with timestamps and administrative IDs.
+- **Dynamic Priority-First Queue with FIFO Tie-Breaker**: Critical escalations (`High` priority) dynamically bubble to the top of the queue. If priorities tie, older complaints are served first (FIFO fairness).
+- **Multi-Admin Transactional Broadcast**: When any resident submits a ticket, Brevo automatically dispatches background transactional email alerts to **all verified administrators** registered in the system.
+- **Super Admin Protection Lock**: Root administrator (User ID #1) is permanently locked against demotion or deletion by any other admin.
+- **Zero-Flicker Studio Dark Mode**: A custom VS Code / Linear-inspired dark palette (`#0d1117` / `#161b22`) powered by CSS Master Design Tokens with instant 1-click switcher and `localStorage` persistence.
+- **Self-Service Account & Profile Management**: Real-time profile editing (Name, Flat/Unit No) and authenticated credential changes with verification status indicators.
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
 ```text
-                                HTTPS
-       ┌─────────────────────────────────────────────────────┐
-       │             React 19 Frontend (Vite)                │
-       │           Hosted on Vercel Edge Network             │
-       └──────────────────────────┬──────────────────────────┘
-                                  │
-                                  │ JSON REST APIs (Axios + JWT)
-                                  ▼
-       ┌─────────────────────────────────────────────────────┐
-       │             FastAPI Backend Service                 │
-       │               Hosted on Render                      │
-       └──────────┬───────────────┬─────────────────┬────────┘
-                  │               │                 │
-                  │               │                 └──────────▶ Brevo SMTP / API
-                  │               │                              - Email Verification
-                  │               │                              - Complaint Updates
-                  │               │                              - Password Recovery
-                  │               │
-                  │               └────────────────────────────▶ Cloudinary CDN
-                  │                                              - Photo Attachments
-                  ▼
-       ┌─────────────────────────────────────────────────────┐
-       │       PostgreSQL Database (Supabase Pooler)         │
-       │    Users, Complaints, Audit History, Notices        │
-       └─────────────────────────────────────────────────────┘
+                                  HTTPS
+        ┌────────────────────────────────────────────────────────┐
+        │            React 19 Frontend (Vite + React Router)     │
+        │          Hosted on Vercel Edge Global Network          │
+        └───────────────────────────┬────────────────────────────┘
+                                    │
+                                    │ JSON REST API (Axios + Bearer JWT)
+                                    ▼
+        ┌────────────────────────────────────────────────────────┐
+        │              FastAPI Backend Application               │
+        │           Hosted on Render (Python 3.12 ASGI)          │
+        └───────────┬───────────────┬──────────────────┬─────────┘
+                    │               │                  │
+                    │               │                  └──────────▶ Brevo (Sendinblue) API
+                    │               │                               - Email Verification
+                    │               │                               - Multi-Admin Notification
+                    │               │                               - Status Resolution Alerts
+                    │               │                               - Password Recovery
+                    │               │
+                    │               └─────────────────────────────▶ Cloudinary CDN
+                    │                                               - Photographic Proof Storage
+                    ▼
+        ┌────────────────────────────────────────────────────────┐
+        │          PostgreSQL Database (Supabase Pooler)         │
+        │       Users, Complaints, Status History, Notices       │
+        └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Key Features & Role Workflows
+## 🚀 Key Features & Role Workflows
 
-### Resident Workflow
-1. **Onboarding & Verification**: Resident registers with name, flat number, email, and password. An asynchronous email verification token is dispatched via Brevo.
-2. **Complaint Registration**: Resident selects a category (Plumbing, Electrical, Cleanliness, Elevator, Security, or Custom), enters detailed descriptions, and optionally uploads photographic proof.
-3. **Tracking & Audit Trail**: Real-time access to personal complaint history, complete with status stepper timeline and full-resolution image lightbox.
-4. **Notice Board Access**: Instant search and read access to official society circulars, with priority announcements pinned at the top.
-5. **Account Recovery**: Self-service password reset flow powered by signed, time-limited JWT tokens.
+### 1. Resident Experience
+- **Frictionless Onboarding**: Sign up with Full Name, Flat/Unit Number, Email, and Password with instant background email verification.
+- **Ticket Submission**: Select from preset maintenance categories (*Plumbing, Electrical, Cleanliness, Elevator, Security, Other*), provide descriptive notes, and attach photo evidence.
+- **Real-Time Timeline**: View detailed audit timeline steppers displaying administrative notes, status changes, and image lightboxes.
+- **Official Notice Board**: Instant access to pinned high-priority alerts and society circulars with client-side live search.
+- **Account Settings (`/profile`)**: Manage personal identification details and update security passwords directly.
 
-### Administration Workflow
-1. **Command Dashboard**: High-level KPI summary displaying total active tickets, overdue escalations, and resolution counts.
-2. **Multi-Criteria Triage**: Filter tickets across categories, resolution statuses, and active vs. archived states.
-3. **Inline Mutations**: Dynamic status transitions with optional resolution notes delivered to the resident's inbox.
-4. **Overdue SLA Management**: Automatic visual indicators and sorting for tickets exceeding the configurable `OVERDUE_DAYS` limit.
-5. **Archival & Purge Control**: Soft-delete functionality allowing resolved tickets to be archived and restored on demand.
-6. **Circular Broadcasting**: Create and publish society notices with optional high-priority pinned ribbons.
+### 2. Society Operations & Admin Console
+- **Unified Operations Table**: View all resident tickets with inline status mutations (`Open`, `In Progress`, `Resolved`), priority toggles (`High`, `Medium`, `Low`), and SLA breach indicators.
+- **Dynamic Sorting Options**:
+  - *Priority (High → Low)* [Default]
+  - *Date Raised (Oldest First / FIFO)*
+  - *Date Raised (Newest First)*
+  - *Flat / Room No*
+  - *Ticket ID (#)*
+- **Administrative Notes**: Add resolution notes during status transitions, which are permanently logged and emailed to residents.
+- **Soft-Archival & Restoration**: Archive resolved complaints to keep the active queue clean without losing audit compliance data.
 
----
+### 3. Super Admin Security & Committee Management
+- **Managing Committee Tab**: Audit all registered residents and committee admins.
+- **Promote / Demote Roles**: Promote active residents to Society Admins or demote existing admins with confirmation safeguards.
+- **Super Admin Hardcoded Immunity**: User ID #1 (`aamijetomar@gmail.com`) is permanently protected from demotion by any admin.
 
-## Technology Stack
-
-| Layer | Component | Description |
-| :--- | :--- | :--- |
-| **Frontend Core** | React 19, Vite 6 | Single Page Application with optimized bundle splitting |
-| **Routing** | React Router DOM v7 | Client-side declarative routing and protected routes |
-| **Network Client** | Axios | HTTP client with request/response JWT interceptors |
-| **Styling Architecture** | Modular Scoped CSS | Component-isolated CSS with design tokens (zero heavy UI dependencies) |
-| **Backend Core** | FastAPI (Python 3.11) | High-performance asynchronous REST API framework |
-| **ORM & Database** | SQLAlchemy 2.0, PostgreSQL | Relational modeling with connection pooling via Supabase |
-| **Validation** | Pydantic v2 | Type safety, request payload validation, and response serialization |
-| **Authentication** | `python-jose`, `passlib[bcrypt]` | Stateless JWT authentication with salted password hashing |
-| **Media Pipeline** | Cloudinary SDK | Cloud storage, transformation, and CDN distribution for images |
-| **Email Service** | `sib-api-v3-sdk` (Brevo) | Transactional email dispatch executed via `BackgroundTasks` |
-| **Infrastructure** | Vercel & Render | Cloud hosting with automated continuous deployment |
+### 4. Design System & Studio Dark Mode
+- **Refined Color Palette**:
+  - Light Theme: Crisp clean slate with soft neutral borders.
+  - Dark Theme: Deep comfortable charcoal (`#0d1117` background, `#161b22` cards, `#f0f6fc` high-contrast typography).
+- **Universal Token Architecture**: 100% tokenized CSS variables with zero hardcoded inline styles.
 
 ---
 
-## Repository Structure
+## 🛠️ Technology Stack
+
+| Layer | Technology | Description |
+|---|---|---|
+| **Frontend** | React 19, Vite, React Router v7 | Fast Single-Page Application (SPA) with responsive layout |
+| **Styling** | Custom Tokenized CSS3 | Design-token variables, zero CSS bloat, Studio Dark Mode |
+| **Backend** | FastAPI (Python 3.12), Pydantic v2 | High-performance asynchronous REST API framework |
+| **ORM & DB** | SQLAlchemy, PostgreSQL (Supabase) | Relational modeling, connection pooling, foreign-key integrity |
+| **Security** | Passlib (Bcrypt), PyJWT | Password hashing, signed 1-hour reset tokens, Bearer auth |
+| **Media CDN** | Cloudinary Python SDK | Cloud image upload and optimized asset delivery |
+| **Email Service** | Brevo (Sendinblue API v3) | Non-blocking transactional email delivery via FastAPI BackgroundTasks |
+| **Hosting** | Vercel (Client), Render (Server) | Global Edge CDN & managed Python hosting |
+
+---
+
+## 📁 Repository Structure
 
 ```text
-FixMyMohalla/
+society-tracker/
 ├── backend/
+│   ├── main.py                   # FastAPI entrypoint, CORS configuration, router mounting
+│   ├── database.py               # SQLAlchemy database engine and session factory
+│   ├── models.py                 # Declarative models (User, Complaint, StatusHistory, Notice)
+│   ├── schemas.py                # Pydantic validation schemas (In/Out/Update)
+│   ├── auth.py                   # Bcrypt password hashing, JWT generation & verification
 │   ├── routers/
-│   │   ├── auth_routes.py        # /auth (register, verify, login, forgot/reset password)
-│   │   ├── complaints.py         # /complaints (CRUD, status/priority, archive/restore)
-│   │   ├── dashboard.py          # /dashboard (analytics, metrics, aggregate counts)
-│   │   └── notices.py            # /notices (bulletin board circulars)
-│   ├── utils/
-│   │   ├── cloudinary_upload.py  # Image upload and CDN helper
-│   │   └── email_utils.py        # Brevo transactional email templates and dispatcher
-│   ├── auth.py                   # JWT generation, token verification, and route guards
-│   ├── config.py                 # Environment variables and application settings
-│   ├── database.py               # Database engine, session maker, and Base model
-│   ├── models.py                 # SQLAlchemy relational ORM models
-│   ├── schemas.py                # Pydantic schemas for payload validation
-│   ├── main.py                   # FastAPI initialization, CORS, and router bindings
-│   └── requirements.txt          # Python runtime dependencies
-│
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   │   ├── Navbar.jsx        # Role-aware sticky header component
-    │   │   └── Navbar.css        # Navbar styles
-    │   ├── pages/
-    │   │   ├── Login.jsx         # Authentication view with recovery access
-    │   │   ├── Login.css
-    │   │   ├── Register.jsx      # Resident signup form
-    │   │   ├── Register.css
-    │   │   ├── VerifyEmail.jsx   # Email token verification screen
-    │   │   ├── VerifyEmail.css
-    │   │   ├── ForgotPassword.jsx# Password recovery initiation screen
-    │   │   ├── ForgotPassword.css
-    │   │   ├── ResetPassword.jsx # Secure password update screen
-    │   │   ├── ResetPassword.css
-    │   │   ├── Dashboard.jsx     # Resident ticket feed and personal metrics
-    │   │   ├── Dashboard.css
-    │   │   ├── RaiseComplaint.jsx# Ticket creation with image preview
-    │   │   ├── RaiseComplaint.css
-    │   │   ├── ComplaintDetail.jsx# Full ticket metadata, zoom lightbox, audit stepper
-    │   │   ├── ComplaintDetail.css
-    │   │   ├── AdminDashboard.jsx# Multi-filter management console with inline actions
-    │   │   ├── AdminDashboard.css
-    │   │   ├── Notices.jsx       # Real-time circular board with search filter
-    │   │   └── Notices.css
-    │   ├── api.js                # Axios instance with 401 interceptor & JWT injection
-    │   ├── App.jsx               # Client application routing configuration
-    │   ├── main.jsx              # DOM entry point
-    │   └── index.css             # Global CSS design tokens, reset, and variables
-    ├── package.json
-    └── vite.config.js
+│   │   ├── auth_routes.py        # Auth, verification, profile, RBAC & password reset
+│   │   ├── complaints.py         # Ticket CRUD, status transitions, priority & archive
+│   │   ├── notices.py            # Society notice board circulars & pinned alerts
+│   │   └── analytics.py          # KPI metrics, overdue calculations & category breakdown
+│   └── utils/
+│       ├── email_utils.py        # Brevo transactional email templates & background sender
+│       └── cloudinary_utils.py   # Cloudinary image upload utility
+├── frontend/
+│   ├── index.html                # HTML5 root with metadata
+│   ├── src/
+│   │   ├── main.jsx              # React DOM mounting & initial theme bootstrapping
+│   │   ├── App.jsx               # Route definitions and protected navigation
+│   │   ├── api.js                # Axios instance, Bearer interceptors & 401 error handler
+│   │   ├── index.css             # Master CSS Design Tokens (Light/Dark themes)
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx        # Sticky navigation with theme toggle & role badge
+│   │   │   └── Navbar.css        # Navbar styling & theme switcher styles
+│   │   └── pages/
+│   │       ├── Login.jsx / .css          # Resident & Admin authentication
+│   │       ├── Register.jsx / .css       # New resident account registration
+│   │       ├── VerifyEmail.jsx / .css    # Email verification confirmation page
+│   │       ├── ForgotPassword.jsx / .css # Password recovery request initiator
+│   │       ├── ResetPassword.jsx / .css  # Signed token password reset view
+│   │       ├── Dashboard.jsx / .css      # Resident ticket dashboard & metrics
+│   │       ├── RaiseComplaint.jsx / .css # Grievance filing form with photo upload
+│   │       ├── ComplaintDetail.jsx / .css# Stepper timeline audit trail & photo zoom
+│   │       ├── AdminDashboard.jsx / .css # Executive command center & committee tab
+│   │       ├── Notices.jsx / .css        # Society circulars & admin publishing form
+│   │       └── Profile.jsx / .css        # Account settings & password change page
+│   └── package.json              # Frontend scripts and dependencies
+├── Readme.md                     # Platform technical documentation
+└── requirements.txt              # Python production dependencies
 ```
 
 ---
 
-## Local Development Setup
+## 💻 Local Development Setup
 
 ### Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **Python**: 3.10 or higher
-- **Database**: Active PostgreSQL database (e.g., Supabase instance)
-- **Cloudinary**: Active cloud credentials
-- **Brevo**: Active API key and verified sender address
+- **Python 3.10+**
+- **Node.js 18+** & **npm**
+- **PostgreSQL database instance** (Local or Supabase)
+- **Cloudinary** and **Brevo (Sendinblue)** API accounts
 
 ---
 
 ### 1. Backend Setup
 
-```bash
-# Navigate to the backend directory
-cd backend
+1. **Navigate to the backend directory and create a virtual environment**:
+   ```bash
+   cd backend
+   python -m venv venv
+   ```
 
-# Create a virtual environment
-python -m venv venv
+2. **Activate virtual environment**:
+   - **Windows (PowerShell)**:
+     ```powershell
+     .\venv\Scripts\Activate.ps1
+     ```
+   - **Linux / macOS**:
+     ```bash
+     source venv/bin/activate
+     ```
 
-# Activate the virtual environment
-# Windows (PowerShell/CMD):
-venv\Scripts\activate
-# macOS / Linux:
-source venv/bin/activate
+3. **Install dependencies**:
+   ```bash
+   pip install -r ../requirements.txt
+   ```
 
-# Install dependencies
-pip install -r requirements.txt
-```
+4. **Create `.env` file in `backend/.env`**:
+   ```ini
+   DATABASE_URL=postgresql://user:password@host:port/dbname
+   SECRET_KEY=your_super_secret_jwt_key_here
+   BREVO_API_KEY=xkeysib-your-brevo-api-key
+   BREVO_SENDER_EMAIL=your_verified_sender@domain.com
+   BREVO_SENDER_NAME=FixMyMohalla
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   FRONTEND_URL=http://localhost:5173
+   ```
 
-Create a `.env` file in the `backend/` directory with the following configuration:
-
-```env
-# Database
-DATABASE_URL=postgresql://postgres.your-project:your-password@aws-0-region.pooler.supabase.com:6543/postgres
-
-# Security & JWT
-JWT_SECRET=your_super_secret_random_key_here
-JWT_ALGORITHM=HS256
-OVERDUE_DAYS=7
-
-# Cloudinary Storage
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-
-# Brevo (Sendinblue) Email Service
-BREVO_API_KEY=xkeysib-your_brevo_api_key_here
-MAIL_FROM=your_verified_brevo_sender@domain.com
-MAIL_FROM_NAME=FixMyMohalla
-NOTIFY_ADMIN_EMAIL=admin@domain.com
-
-# Dynamic Frontend URL for Email Links
-FRONTEND_URL=http://localhost:5173
-```
-
-Start the backend development server:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-- **API Server Running**: `http://localhost:8000`
-- **Interactive Swagger Docs**: `http://localhost:8000/docs`
-- **ReDoc Documentation**: `http://localhost:8000/redoc`
+5. **Start backend development server**:
+   ```bash
+   uvicorn main:app --reload --port 8000
+   ```
+   *Swagger API Documentation will be accessible at: `http://localhost:8000/docs`*
 
 ---
 
 ### 2. Frontend Setup
 
-```bash
-# Navigate to the frontend directory
-cd frontend
+1. **Navigate to the frontend directory**:
+   ```bash
+   cd ../frontend
+   ```
 
-# Install Node dependencies
-npm install
-```
+2. **Install npm dependencies**:
+   ```bash
+   npm install
+   ```
 
-Create a `.env` file in the `frontend/` directory (optional for local testing):
+3. **Create `.env` file in `frontend/.env`**:
+   ```ini
+   VITE_API_BASE_URL=http://localhost:8000
+   ```
 
-```env
-VITE_API_URL=http://localhost:8000
-```
-
-Start the Vite development server:
-
-```bash
-npm run dev
-```
-- **Application URL**: `http://localhost:5173`
+4. **Start Vite development server**:
+   ```bash
+   npm run dev
+   ```
+   *Frontend application will be accessible at: `http://localhost:5173`*
 
 ---
 
-## REST API Specification
+## 🔐 Environment Configuration Reference
 
-### 1. Authentication & Recovery
+| Variable Name | Required | Description | Example |
+|---|---|---|---|
+| `DATABASE_URL` | **Yes** | PostgreSQL connection string | `postgresql://postgres:pass@aws-0-ap-south-1.pooler.supabase.com:6543/postgres` |
+| `SECRET_KEY` | **Yes** | Cryptographic secret for signing JWTs | `b3f12a64c8d7e9...` |
+| `BREVO_API_KEY` | **Yes** | Brevo v3 Transactional API Key | `xkeysib-39f28a...` |
+| `BREVO_SENDER_EMAIL`| **Yes** | Verified sender email in Brevo | `notifications@fixmymohalla.in` |
+| `BREVO_SENDER_NAME` | **No** | Display name for outgoing emails | `FixMyMohalla Society Desk` |
+| `CLOUDINARY_CLOUD_NAME`| **Yes** | Cloudinary Cloud Name | `dmxy...` |
+| `CLOUDINARY_API_KEY` | **Yes** | Cloudinary API Key | `48291829...` |
+| `CLOUDINARY_API_SECRET`| **Yes** | Cloudinary API Secret | `Kx9f2L...` |
+| `FRONTEND_URL` | **Yes** | Origin URL for email action links | `https://fix-my-mohalla.vercel.app` |
 
+---
+
+## 📡 REST API Specification
+
+### 1. Authentication, Profile & RBAC
 | Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/auth/register` | Public | Register new resident account and trigger verification email |
-| `GET` | `/auth/verify/{token}` | Public | Verify resident email via one-time signed token |
-| `POST` | `/auth/login` | Public | Authenticate user and return JWT bearer token & role |
-| `POST` | `/auth/forgot-password` | Public | Trigger password reset link to user's registered email |
-| `POST` | `/auth/reset-password` | Public | Update user password using validated recovery token |
+|---|---|---|---|
+| `POST` | `/auth/register` | Public | Register new resident account & trigger email verification |
+| `POST` | `/auth/login` | Public | Authenticate credentials and return JWT Bearer token |
+| `GET` | `/auth/verify-email/{token}` | Public | Verify resident account from email confirmation link |
+| `POST` | `/auth/forgot-password` | Public | Dispatch 1-hour signed password recovery token via email |
+| `POST` | `/auth/reset-password` | Public | Submit new password using signed reset token |
+| `GET` | `/auth/me` | Authenticated | Retrieve currently authenticated user profile |
+| `PATCH` | `/auth/me` | Authenticated | Update user display name and flat/unit number |
+| `POST` | `/auth/change-password` | Authenticated | Update account password using current password verification |
+| `GET` | `/auth/users` | Admin | List all registered society members with role designations |
+| `PATCH` | `/auth/users/{user_id}/role` | Admin | Promote/demote member role (Locked for Super Admin #1) |
 
-### 2. Complaints Management
-
+### 2. Complaints Operations
 | Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/complaints/` | Resident | Create complaint with multipart form data & optional image |
-| `GET` | `/complaints/my` | Resident | Retrieve all complaints submitted by the authenticated resident |
-| `GET` | `/complaints/` | Admin | Query all society complaints with filtering and archival options |
-| `GET` | `/complaints/{id}` | Authenticated | Retrieve complete ticket details and full history timeline |
-| `PATCH`| `/complaints/{id}/status` | Admin | Update complaint status (`Open`, `In Progress`, `Resolved`) |
-| `PATCH`| `/complaints/{id}/priority` | Admin | Update priority tier (`Low`, `Medium`, `High`) |
-| `DELETE`| `/complaints/{id}` | Admin | Soft-delete / archive a resolved complaint |
-| `PATCH`| `/complaints/{id}/restore` | Admin | Restore an archived complaint back to active records |
+|---|---|---|---|
+| `GET` | `/complaints/my` | Resident | List all complaints raised by authenticated resident |
+| `POST` | `/complaints/` | Resident | Raise new maintenance complaint with photo attachment |
+| `GET` | `/complaints/{id}` | Authenticated | Get detailed complaint metadata, status timeline & photo |
+| `GET` | `/complaints` | Admin | List all society complaints with filtering & archived flag |
+| `PATCH` | `/complaints/{id}/status` | Admin | Update ticket status (`Open`, `In Progress`, `Resolved`) with remark |
+| `PATCH` | `/complaints/{id}/priority`| Admin | Mutate priority tier (`Low`, `Medium`, `High`) |
+| `DELETE`| `/complaints/{id}` | Admin | Soft-archive a resolved ticket |
+| `PATCH` | `/complaints/{id}/restore` | Admin | Restore an archived ticket back to active queue |
 
 ### 3. Notice Board
-
 | Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/notices/` | Authenticated | Fetch society circulars ordered by priority and date |
-| `POST` | `/notices/` | Admin | Publish a new society announcement with optional priority pin |
+|---|---|---|---|
+| `GET` | `/notices/` | Authenticated | Retrieve all official notices (Pinned notices returned first) |
+| `POST` | `/notices/` | Admin | Publish new society circular with optional high-priority flag |
 
-### 4. Analytics & Metrics
-
+### 4. Metrics & Analytics
 | Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/dashboard/stats` | Admin | Aggregate counts by status, category breakdown, and overdue metrics |
+|---|---|---|---|
+| `GET` | `/analytics/summary` | Admin | Fetch operational metrics: total, resolved, pending, overdue SLA |
 
 ---
 
-## Database Schema & Security Architecture
+## 🗄️ Database Schema & Security Architecture
 
 ```mermaid
 erDiagram
-    USERS ||--o{ COMPLAINTS : "submits"
+    USERS ||--o{ COMPLAINTS : "raises"
     USERS ||--o{ NOTICES : "publishes"
-    USERS ||--o{ COMPLAINT_HISTORY : "modifies"
-    COMPLAINTS ||--o{ COMPLAINT_HISTORY : "tracks"
+    COMPLAINTS ||--o{ STATUS_HISTORY : "tracks"
 
     USERS {
         int id PK
         string name
         string email UK
-        string password_hash
+        string hashed_password
         string flat_no
-        string role
+        string role "resident | admin"
         boolean is_verified
+        string verification_token
         datetime created_at
     }
 
@@ -342,14 +352,15 @@ erDiagram
         string category
         string description
         string photo_url
-        string current_status
-        string priority
+        string current_status "Open | In Progress | Resolved"
+        string priority "Low | Medium | High"
         boolean is_archived
         datetime created_at
+        datetime updated_at
         datetime resolved_at
     }
 
-    COMPLAINT_HISTORY {
+    STATUS_HISTORY {
         int id PK
         int complaint_id FK
         string status
@@ -363,81 +374,44 @@ erDiagram
         string title
         string body
         boolean is_important
-        int posted_by FK
+        int created_by FK
         datetime created_at
     }
 ```
 
-### Security Highlights
-- **Stateless Authorization**: All protected endpoints require a valid `Bearer <JWT_TOKEN>` header.
-- **Role Isolation**: Dependency injection via `get_current_user` and `require_admin` guards sensitive administration operations.
-- **Automated Revocation**: The frontend Axios response interceptor captures `401 Unauthorized` responses to clear local storage credentials and redirect users to `/login`.
-- **SQL Injection Defense**: All database queries are constructed using SQLAlchemy ORM parameterized statements.
-
 ---
 
-## Production Deployment Guide
+## 🌐 Production Deployment Guide
 
 ### Backend Deployment (Render)
-1. Link your GitHub repository to a new **Web Service** on [Render](https://render.com).
-2. Configure settings:
+1. Link GitHub repository to Render Web Service.
+2. Configure runtime parameters:
    - **Environment**: `Python 3`
-   - **Root Directory**: `backend`
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-3. Add Environment Variables:
-   - `DATABASE_URL`: *Your Supabase PostgreSQL Connection String*
-   - `JWT_SECRET`: *Your Secure Secret Key*
-   - `JWT_ALGORITHM`: `HS256`
-   - `OVERDUE_DAYS`: `7`
-   - `CLOUDINARY_CLOUD_NAME`: *Cloudinary Cloud Name*
-   - `CLOUDINARY_API_KEY`: *Cloudinary API Key*
-   - `CLOUDINARY_API_SECRET`: *Cloudinary API Secret*
-   - `BREVO_API_KEY`: *Brevo API Key*
-   - `MAIL_FROM`: *Verified Brevo Sender Email*
-   - `MAIL_FROM_NAME`: `FixMyMohalla`
-   - `NOTIFY_ADMIN_EMAIL`: *Admin Notification Email*
-   - `FRONTEND_URL`: `https://your-app.vercel.app`
+   - **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+3. Add all required backend environment variables in the Render Dashboard.
 
 ### Frontend Deployment (Vercel)
-1. Import your GitHub repository into [Vercel](https://vercel.com).
-2. Configure settings:
-   - **Framework Preset**: `Vite`
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-3. Add Environment Variable:
-   - `VITE_API_URL`: `https://your-backend.onrender.com`
+1. Import GitHub repository into Vercel.
+2. Set Root Directory to `frontend`.
+3. Configure Environment Variables:
+   - `VITE_API_BASE_URL`: `https://your-backend-service.onrender.com`
+4. Deploy. Vercel will automatically compile and distribute the SPA across its Edge network.
 
 ---
 
-## Troubleshooting & FAQ
-
-#### 1. Why are verification or password reset emails not arriving?
-- Check your spam, promotions, or junk folders.
-- Ensure `MAIL_FROM` in `.env` matches a verified sender identity configured in your [Brevo Senders Dashboard](https://app.brevo.com).
-- Verify that your Brevo API key begins with `xkeysib-` and has active sending quotas.
-
-#### 2. Why does logging in as Admin in one tab change my Resident session in another?
-- Modern web browsers share `localStorage` across tabs of the same origin. To test both roles simultaneously on the same machine, open the Admin portal in a normal browser window and the Resident portal in an **Incognito / Private Window** (`Ctrl + Shift + N`).
-
-#### 3. How do I make a resident user an administrator?
-- Connect to your Supabase SQL editor and execute:
-  ```sql
-  UPDATE users SET role = 'admin' WHERE email = 'admin@example.com';
-  ```
-
----
-
-## Author
+## 👨‍💻 Author
 
 **Tushar Kumar**  
-B.Tech (Final Year), Vellore Institute of Technology (VIT), Chennai  
-- GitHub: [@tushar1121s](https://github.com/tushar1121s)  
-- Repository: [FixMyMohalla](https://github.com/tushar1121s/FixMyMohalla)
+*B.Tech in Computer Science & Engineering (Final Year)*  
+**Vellore Institute of Technology (VIT), Chennai**  
+
+- **GitHub**: [github.com/tusharkumar](https://github.com)
+- **LinkedIn**: [linkedin.com/in/tusharkumar](https://linkedin.com)
+- **Email**: `aamijetomar@gmail.com`
 
 ---
 
-## License
+## 📄 License
 
-This project is distributed under the terms of the [MIT License](LICENSE).
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for full details.
