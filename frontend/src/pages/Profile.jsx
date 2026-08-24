@@ -101,7 +101,7 @@ function Profile() {
   if (!user) {
     return (
       <div className="profile-page-container">
-        <div style={{ color: "#64748b", padding: "40px 0" }}>Loading account profile...</div>
+        <div className="profile-loading-text">Loading account profile...</div>
       </div>
     );
   }
@@ -126,10 +126,10 @@ function Profile() {
             ) : (
               <span className="badge-unverified-pill">Unverified</span>
             )}
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", background: "#f1f5f9", padding: "2px 8px", borderRadius: 4, color: "#334155" }}>
+            <span className="profile-role-tag">
               Role: {user.role}
             </span>
-            <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>Member #{user.id}</span>
+            <span className="profile-member-id">Member #{user.id}</span>
           </div>
         </div>
       </div>

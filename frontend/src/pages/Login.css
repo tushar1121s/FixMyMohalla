@@ -1,5 +1,5 @@
 /* ===================================================
-   Login Page Styles - Subtle, Professional & Minimal
+   Login Page Styles - Variable-Driven & Minimal
    =================================================== */
 
 .auth-page-container {
@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background-color: var(--bg-body);
   padding: 24px 16px;
 }
 
@@ -16,10 +16,10 @@
   grid-template-columns: 1fr 1fr;
   max-width: 880px;
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-modal);
   overflow: hidden;
 }
 
@@ -31,6 +31,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+[data-theme="dark"] .auth-banner-side {
+  background-color: #0d1117;
+  border-right: 1px solid var(--border-color);
 }
 
 .auth-brand-label {
@@ -93,7 +98,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
 }
 
 .auth-header {
@@ -103,13 +108,13 @@
 .auth-title {
   font-size: 1.45rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .auth-subtitle {
   font-size: 0.88rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .auth-form {
@@ -133,20 +138,19 @@
 .form-label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-secondary);
 }
 
 .forgot-password-link {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   text-decoration: none !important;
   transition: color 0.15s ease;
 }
 
-
 .forgot-password-link:hover {
-  color: #0f172a;
+  color: var(--text-primary);
   text-decoration: underline !important;
 }
 
@@ -155,21 +159,21 @@
   padding: 10px 12px;
   font-size: 0.92rem;
   font-family: inherit;
-  color: #0f172a;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-input);
   border-radius: 6px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .form-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-faint);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #0f172a;
-  box-shadow: 0 0 0 1px #0f172a;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 1px var(--border-focus);
 }
 
 .password-wrapper {
@@ -189,13 +193,13 @@
   border: none;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 4px 6px;
 }
 
 .password-toggle-btn:hover {
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .auth-submit-btn {
@@ -203,17 +207,17 @@
   padding: 10px 16px;
   font-size: 0.92rem;
   font-weight: 600;
-  color: #ffffff;
-  background-color: #0f172a;
-  border: 1px solid #0f172a;
+  color: var(--accent-btn-text);
+  background-color: var(--accent-btn-bg);
+  border: 1px solid var(--accent-btn-bg);
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
   margin-top: 4px;
 }
 
 .auth-submit-btn:hover {
-  background-color: #1e293b;
+  background-color: var(--accent-btn-hover);
 }
 
 .auth-submit-btn:disabled {
@@ -222,9 +226,9 @@
 }
 
 .auth-alert-error {
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background-color: var(--badge-open-bg);
+  border: 1px solid var(--badge-open-border);
+  color: var(--badge-open-text);
   padding: 10px 12px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -236,11 +240,11 @@
   margin-top: 24px;
   text-align: center;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .auth-footer-link {
-  color: #0f172a;
+  color: var(--text-primary);
   font-weight: 600;
   text-decoration: underline;
 }

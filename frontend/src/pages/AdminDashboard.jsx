@@ -332,7 +332,7 @@ function AdminDashboard() {
               <tbody>
                 {sortedComplaints.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "36px", color: "#71717a" }}>
+                    <td colSpan="7" className="admin-empty-table-cell">
                       No tickets matching specified filter criteria.
                     </td>
                   </tr>
@@ -501,7 +501,7 @@ function AdminDashboard() {
               <tbody>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={{ textAlign: "center", padding: "36px", color: "#71717a" }}>
+                    <td colSpan="6" className="admin-empty-table-cell">
                       No members found matching query.
                     </td>
                   </tr>
