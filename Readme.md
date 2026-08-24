@@ -328,7 +328,7 @@ Runs at: `http://localhost:5173`
 
 ## Author
 
-*(Add your name and year/branch here)*
+*Tushar kumar - B.tech(VIT CHENNAI)*
 
 ---
 
