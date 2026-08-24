@@ -14,13 +14,15 @@ function AdminDashboard() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({ category: "", status: "" });
+    const [showArchived, setShowArchived] = useState(false);
     const navigate = useNavigate();
 
-    const fetchComplaints = () => {
+    const fetchComplaints = (archived = showArchived) => {
         setLoading(true);
         const params = {};
         if (filters.category) params.category = filters.category;
         if (filters.status) params.status = filters.status;
+        if (archived) params.include_archived = true;
 
         api
             .get("/complaints", { params })
@@ -69,6 +71,27 @@ function AdminDashboard() {
         }
     };
 
+    const handleDeleteComplaint = async (id) => {
+        if (!window.confirm("Are you sure you want to delete / archive this resolved complaint?")) {
+            return;
+        }
+        try {
+            await api.delete(`/complaints/${id}`);
+            fetchComplaints();
+        } catch (err) {
+            alert(err.response?.data?.detail || "Failed to delete complaint");
+        }
+    };
+
+    const handleRestoreComplaint = async (id) => {
+        try {
+            await api.patch(`/complaints/${id}/restore`);
+            fetchComplaints();
+        } catch (err) {
+            alert(err.response?.data?.detail || "Failed to restore complaint");
+        }
+    };
+
     if (loading) return <p className="page-container-wide">Loading...</p>;
 
     return (
@@ -81,7 +104,7 @@ function AdminDashboard() {
                 <Link className="back-link" to="/notices">Manage Notice Board</Link>
             </p>
 
-            <form onSubmit={handleFilterSubmit} className="filter-form">
+            <form onSubmit={handleFilterSubmit} className="filter-form" style={{ alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
                 <input
                     className="input"
                     type="text"
@@ -99,6 +122,17 @@ function AdminDashboard() {
                     <option value="In Progress">In Progress</option>
                     <option value="Resolved">Resolved</option>
                 </select>
+                <label className="checkbox-label" style={{ marginBottom: 0, display: "inline-flex", alignItems: "center", cursor: "pointer" }}>
+                    <input
+                        type="checkbox"
+                        checked={showArchived}
+                        onChange={(e) => {
+                            setShowArchived(e.target.checked);
+                            fetchComplaints(e.target.checked);
+                        }}
+                    />
+                    Show Archived
+                </label>
                 <button className="btn btn-primary" type="submit">Apply Filters</button>
             </form>
 
@@ -113,6 +147,7 @@ function AdminDashboard() {
                     <p>
                         <strong>#{c.id} — {c.category}</strong>{" "}
                         {c.is_overdue && <span className="overdue-tag">(OVERDUE)</span>}
+                        {c.is_archived && <span className="badge" style={{ marginLeft: "8px", background: "#6b7280", color: "#ffffff" }}>Archived</span>}
                     </p>
                     <p>{c.description}</p>
                     <p>
@@ -124,32 +159,58 @@ function AdminDashboard() {
                         <img src={c.photo_url} alt="complaint" />
                     )}
 
-                    <div className="control-group">
-                        <label>Update Status:</label>
-                        <select
-                            className="input"
-                            value={c.current_status}
-                            onChange={(e) => handleStatusUpdate(c.id, e.target.value)}
-                            disabled={c.current_status === "Resolved"}
-                        >
-                            <option value="Open">Open</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Resolved">Resolved</option>
-                        </select>
-                    </div>
+                    {!c.is_archived ? (
+                        <>
+                            <div className="control-group">
+                                <label>Update Status:</label>
+                                <select
+                                    className="input"
+                                    value={c.current_status}
+                                    onChange={(e) => handleStatusUpdate(c.id, e.target.value)}
+                                    disabled={c.current_status === "Resolved"}
+                                >
+                                    <option value="Open">Open</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select>
+                            </div>
 
-                    <div className="control-group">
-                        <label>Update Priority:</label>
-                        <select
-                            className="input"
-                            value={c.priority}
-                            onChange={(e) => handlePriorityUpdate(c.id, e.target.value)}
-                        >
-                            <option value="Low">Low</option>
-                            <option value="Medium">Medium</option>
-                            <option value="High">High</option>
-                        </select>
-                    </div>
+                            <div className="control-group">
+                                <label>Update Priority:</label>
+                                <select
+                                    className="input"
+                                    value={c.priority}
+                                    onChange={(e) => handlePriorityUpdate(c.id, e.target.value)}
+                                >
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+
+                            {c.current_status === "Resolved" && (
+                                <div className="control-group" style={{ marginTop: "var(--space-md)" }}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleDeleteComplaint(c.id)}
+                                    >
+                                        🗑️ Delete / Archive
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="control-group" style={{ marginTop: "var(--space-md)" }}>
+                            <button
+                                type="button"
+                                className="btn btn-sm"
+                                onClick={() => handleRestoreComplaint(c.id)}
+                            >
+                                ↩️ Restore Complaint
+                            </button>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>

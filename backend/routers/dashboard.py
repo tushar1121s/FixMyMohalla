@@ -18,18 +18,23 @@ def get_dashboard_stats(
 ):
     status_counts = (
         db.query(Complaint.current_status, func.count(Complaint.id))
+        .filter(Complaint.is_archived == False)
         .group_by(Complaint.current_status)
         .all()
     )
 
     category_counts = (
         db.query(Complaint.category, func.count(Complaint.id))
+        .filter(Complaint.is_archived == False)
         .group_by(Complaint.category)
         .all()
     )
 
     now = datetime.now(timezone.utc)
-    all_complaints = db.query(Complaint).filter(Complaint.current_status != "Resolved").all()
+    all_complaints = db.query(Complaint).filter(
+        Complaint.current_status != "Resolved",
+        Complaint.is_archived == False
+    ).all()
 
     overdue_count = 0
     for c in all_complaints:

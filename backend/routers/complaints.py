@@ -64,7 +64,7 @@ def get_my_complaints(
 ):
     complaints = (
         db.query(Complaint)
-        .filter(Complaint.resident_id == current_user.id)
+        .filter(Complaint.resident_id == current_user.id, Complaint.is_archived == False)
         .order_by(desc(Complaint.created_at))
         .all()
     )
@@ -100,6 +100,7 @@ def get_complaint_detail(
 def get_all_complaints(
     category: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
+    include_archived: bool = Query(False),
     date_from: Optional[datetime] = Query(None),
     date_to: Optional[datetime] = Query(None),
     db: Session = Depends(get_db),
@@ -107,6 +108,8 @@ def get_all_complaints(
 ):
     query = db.query(Complaint)
 
+    if not include_archived:
+        query = query.filter(Complaint.is_archived == False)
     if category:
         query = query.filter(Complaint.category == category)
     if status:
@@ -140,6 +143,7 @@ def get_all_complaints(
             "created_at": c.created_at,
             "resolved_at": c.resolved_at,
             "is_overdue": is_overdue,
+            "is_archived": bool(c.is_archived),
         })
 
     result.sort(key=lambda x: (not x["is_overdue"], -x["created_at"].timestamp()))
@@ -188,7 +192,6 @@ def update_complaint_status(
         "resolved_at": complaint.resolved_at,
     }
 
-from schemas import PriorityUpdate
 
 @router.patch("/{complaint_id}/priority")
 def update_complaint_priority(
@@ -209,3 +212,35 @@ def update_complaint_priority(
         "id": complaint.id,
         "priority": complaint.priority,
     }
+
+
+@router.delete("/{complaint_id}")
+def delete_complaint(
+    complaint_id: int,
+    db: Session = Depends(get_db),
+    admin_user: User = Depends(require_admin),
+):
+    complaint = db.query(Complaint).filter(Complaint.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    complaint.is_archived = True
+    db.commit()
+
+    return {"message": "Complaint archived successfully", "id": complaint.id}
+
+
+@router.patch("/{complaint_id}/restore")
+def restore_complaint(
+    complaint_id: int,
+    db: Session = Depends(get_db),
+    admin_user: User = Depends(require_admin),
+):
+    complaint = db.query(Complaint).filter(Complaint.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    complaint.is_archived = False
+    db.commit()
+
+    return {"message": "Complaint restored successfully", "id": complaint.id}

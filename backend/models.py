@@ -26,6 +26,7 @@ class Complaint(Base):
     photo_url = Column(String, nullable=True)
     current_status = Column(String, default="Open")  # Open | In Progress | Resolved
     priority = Column(String, default="Low")  # Low | Medium | High
+    is_archived = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     resolved_at = Column(DateTime(timezone=True), nullable=True)
 

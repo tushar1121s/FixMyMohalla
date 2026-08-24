@@ -58,6 +58,7 @@ class ComplaintOut(BaseModel):
     photo_url: Optional[str] = None
     current_status: str
     priority: str
+    is_archived: bool = False
     created_at: datetime
     resolved_at: Optional[datetime] = None
 
