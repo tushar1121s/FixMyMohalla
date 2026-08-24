@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./Navbar.css";
 
@@ -6,6 +7,19 @@ function Navbar() {
   const location = useLocation();
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -66,8 +80,17 @@ function Navbar() {
         </nav>
       </div>
 
-      {/* Right Side: Role Badge, Account Link & Logout */}
+      {/* Right Side: Theme Toggle, Role Badge, Account Link & Logout */}
       <div className="navbar-actions">
+        {/* Dark/Light Mode Switcher */}
+        <button
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+        </button>
+
         <span
           className={`navbar-role-tag ${
             role === "admin" ? "role-tag-admin" : "role-tag-resident"
