@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional, List
 
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -12,6 +12,7 @@ from schemas import ComplaintOut, ComplaintDetailOut, StatusUpdate, PriorityUpda
 from auth import get_current_user, require_admin
 from utils.cloudinary_upload import upload_photo
 from config import OVERDUE_DAYS
+from utils.email_utils import send_complaint_created_email, send_status_update_email, send_admin_notification_email
 
 router = APIRouter()
 
@@ -21,6 +22,7 @@ def create_complaint(
     category: str = Form(...),
     description: str = Form(...),
     photo: UploadFile = File(None),
+    background_tasks: BackgroundTasks = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -48,6 +50,9 @@ def create_complaint(
     )
     db.add(history)
     db.commit()
+
+    background_tasks.add_task(send_complaint_created_email, current_user.email, complaint.category, complaint.id)
+    background_tasks.add_task(send_admin_notification_email, complaint.category, complaint.id, current_user.email)
 
     return complaint
 
@@ -146,6 +151,7 @@ def get_all_complaints(
 def update_complaint_status(
     complaint_id: int,
     update: StatusUpdate,
+    background_tasks: BackgroundTasks = None,
     db: Session = Depends(get_db),
     admin_user: User = Depends(require_admin),
 ):
@@ -171,6 +177,10 @@ def update_complaint_status(
     )
     db.add(history)
     db.commit()
+
+    resident = db.query(User).filter(User.id == complaint.resident_id).first()
+    if resident:
+        background_tasks.add_task(send_status_update_email, resident.email, complaint.category, complaint.id, complaint.current_status)
 
     return {
         "id": complaint.id,
@@ -199,5 +209,3 @@ def update_complaint_priority(
         "id": complaint.id,
         "priority": complaint.priority,
     }
-
-
