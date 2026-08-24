@@ -5,12 +5,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 28px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  padding: 0 28px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  transition: all 0.2s ease;
+}
+
+/* Left Brand Section */
+.navbar-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 
 .navbar-brand {
@@ -20,117 +28,115 @@
   text-decoration: none !important;
 }
 
-.navbar-logo-icon {
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, #4f46e5, #8b5cf6);
-  border-radius: 10px;
+.navbar-brand-symbol {
+  width: 28px;
+  height: 28px;
+  background-color: #0f172a;
+  color: #ffffff;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .navbar-brand-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #4f46e5, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.03em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
+/* Nav Links */
 .navbar-nav-links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .navbar-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  color: #475569;
-  font-size: 0.92rem;
+  padding: 7px 12px;
+  color: #64748b;
+  font-size: 0.88rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 6px;
   text-decoration: none !important;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
 }
 
 .navbar-link:hover {
   color: #0f172a;
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
 }
 
 .navbar-link.active {
-  color: #4f46e5;
-  background-color: #eef2ff;
+  color: #0f172a;
+  background-color: #f1f5f9;
   font-weight: 700;
 }
 
+/* Right Actions */
 .navbar-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.navbar-user-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f1f5f9;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  border: 1px solid #e2e8f0;
-}
-
-.user-role-text {
-  font-size: 0.8rem;
+.navbar-role-tag {
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #4f46e5;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+}
+
+.role-tag-admin {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.role-tag-resident {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #334155;
 }
 
 .navbar-logout-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border: 1px solid #ef4444;
-  color: #ffffff !important;
-  font-size: 0.88rem;
-  font-weight: 700;
-  border-radius: 8px;
+  padding: 6px 12px;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
 }
 
 .navbar-logout-btn:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  border-color: #dc2626;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
-  transform: translateY(-1px);
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 
 @media (max-width: 768px) {
   .navbar-container {
-    padding: 12px 16px;
+    padding: 0 16px;
+    height: 56px;
   }
   .navbar-brand-title {
-    font-size: 1.1rem;
+    font-size: 0.98rem;
   }
   .navbar-link {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-  }
-  .user-role-text {
-    display: none;
+    padding: 6px 8px;
+    font-size: 0.82rem;
   }
 }
