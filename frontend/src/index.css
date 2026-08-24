@@ -422,3 +422,9 @@ label {
   margin-top: var(--space-xs);
 }
 
+/* Verify Email page */
+.verify-status {
+  text-align: center;
+  padding: var(--space-lg) 0;
+  color: var(--color-text-muted);
+}

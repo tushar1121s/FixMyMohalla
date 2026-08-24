@@ -7,6 +7,7 @@ import RaiseComplaint from "./pages/RaiseComplaint";
 import ComplaintDetail from "./pages/ComplaintDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import Notices from "./pages/Notices";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verify/:token" element={<VerifyEmail />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/raise-complaint" element={<RaiseComplaint />} />
         <Route path="/complaints/:id" element={<ComplaintDetail />} />
