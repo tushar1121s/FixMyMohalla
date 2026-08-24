@@ -75,3 +75,21 @@ def require_admin(current_user: models.User = Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
+
+
+def create_password_reset_token(email: str, expires_delta: timedelta = timedelta(hours=1)):
+    to_encode = {"sub": email, "type": "password_reset"}
+    expire = datetime.utcnow() + expires_delta
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, config.JWT_SECRET, algorithm=config.JWT_ALGORITHM)
+    return encoded_jwt
+
+
+def verify_password_reset_token(token: str):
+    try:
+        payload = jwt.decode(token, config.JWT_SECRET, algorithms=[config.JWT_ALGORITHM])
+        if payload.get("type") != "password_reset":
+            return None
+        return payload.get("sub")  # returns email
+    except JWTError:
+        return None

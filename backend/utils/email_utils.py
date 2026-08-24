@@ -59,3 +59,16 @@ async def send_admin_notification_email(complaint_title: str, complaint_id: int,
     <p>Raised by: {resident_email}</p>
     """
     _send_email(config.NOTIFY_ADMIN_EMAIL, "New Complaint Raised - FixMyMohalla", html)
+
+
+
+async def send_password_reset_email(email: str, token: str):
+    reset_link = f"{config.FRONTEND_URL}/reset-password/{token}"
+    html = f"""
+    <p>Hi,</p>
+    <p>You requested to reset your password for FixMyMohalla.</p>
+    <p>Please click the link below to set a new password:</p>
+    <p><a href="{reset_link}">{reset_link}</a></p>
+    <p>This link is valid for 1 hour. If you did not request this, please ignore this email.</p>
+    """
+    _send_email(email, "Reset your FixMyMohalla password", html)
