@@ -406,9 +406,9 @@ erDiagram
 *B.Tech in Computer Science & Engineering (Final Year)*  
 **Vellore Institute of Technology (VIT), Chennai**  
 
-- **GitHub**: [github.com/tusharkumar](https://github.com)
-- **LinkedIn**: [linkedin.com/in/tusharkumar](https://linkedin.com)
-- **Email**: `aamijetomar@gmail.com`
+- **GitHub**: [github.com/tusharkumar](https://github.com/tushar1121s)
+- **LinkedIn**: [linkedin.com/in/tusharkumar](https://www.linkedin.com/in/tushar-kumar-bb3ab128a/)
+- **Email**: `tusharkumarjuly14@gmail.com`
 
 ---
 
