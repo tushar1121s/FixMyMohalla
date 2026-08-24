@@ -1,3 +1,7 @@
+/* ===================================================
+   Login Page Styles - Subtle, Professional & Minimal
+   =================================================== */
+
 .auth-page-container {
   min-height: 100vh;
   display: flex;
@@ -120,10 +124,30 @@
   gap: 6px;
 }
 
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .form-label {
   font-size: 0.82rem;
   font-weight: 600;
   color: #334155;
+}
+
+.forgot-password-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: none !important;
+  transition: color 0.15s ease;
+}
+
+
+.forgot-password-link:hover {
+  color: #0f172a;
+  text-decoration: underline !important;
 }
 
 .form-input {
@@ -221,6 +245,7 @@
   text-decoration: underline;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .auth-card-wrapper {
     grid-template-columns: 1fr;

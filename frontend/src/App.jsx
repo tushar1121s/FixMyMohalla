@@ -8,6 +8,11 @@ import ComplaintDetail from "./pages/ComplaintDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import Notices from "./pages/Notices";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+
+
+
 
 function App() {
   return (
@@ -23,6 +28,8 @@ function App() {
         <Route path="/complaints/:id" element={<ComplaintDetail />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/notices" element={<Notices />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </>
   );
