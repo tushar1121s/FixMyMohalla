@@ -1,9 +1,9 @@
 /* ===================================================
-   Notices Board Styles - Matching Notices.jsx Classes
+   Notices Board Styles - Variable-Driven & Minimal
    =================================================== */
 
 .notices-page-container {
-  max-width: 920px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 32px 20px 64px;
 }
@@ -90,7 +90,7 @@
 
 .notice-input {
   width: 100%;
-  padding: 9px 12px;
+  padding: 10px 12px;
   font-size: 0.9rem;
   font-family: inherit;
   color: var(--text-primary);
@@ -155,20 +155,34 @@
   cursor: pointer;
 }
 
-/* Search Bar */
-.notices-search-bar {
+/* Operations Toolbar Card */
+.notices-toolbar-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px 20px;
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+.notices-search-box {
+  flex: 1 1 280px;
 }
 
 .notices-search-input {
   width: 100%;
-  padding: 10px 14px;
-  font-size: 0.9rem;
+  padding: 9px 14px;
+  font-size: 0.88rem;
   color: var(--text-primary);
-  background-color: var(--bg-card);
+  background-color: var(--bg-input);
   border: 1px solid var(--border-input);
-  border-radius: 8px;
-  box-shadow: var(--shadow-card);
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .notices-search-input:focus {
@@ -177,7 +191,58 @@
   box-shadow: 0 0 0 1px var(--border-focus);
 }
 
+.notices-filters-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.notices-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notices-filter-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.notices-select-filter {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.notices-reset-filter-btn {
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--badge-open-text);
+  background-color: var(--badge-open-bg);
+  border: 1px solid var(--badge-open-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.notices-reset-filter-btn:hover {
+  opacity: 0.85;
+}
+
 /* Section Title */
+.notices-section-block {
+  margin-bottom: 28px;
+}
+
 .notices-section-title {
   font-size: 1.1rem;
   font-weight: 700;
@@ -203,7 +268,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 28px;
 }
 
 .notice-item-card {
@@ -236,7 +300,7 @@
 .notice-item-header-meta {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -270,6 +334,24 @@
   border-color: #78350f;
 }
 
+.notice-delete-btn {
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--badge-open-text);
+  background-color: var(--badge-open-bg);
+  border: 1px solid var(--badge-open-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.notice-delete-btn:hover {
+  background-color: #e11d48;
+  color: #ffffff;
+  border-color: #e11d48;
+}
+
 .notice-item-body {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -288,11 +370,11 @@
   padding-top: 10px;
 }
 
-.notice-item-date {
+.notice-source-label {
+  font-weight: 600;
   color: var(--text-muted);
 }
 
-.notice-item-author {
-  font-weight: 600;
-  color: var(--text-secondary);
+.notice-date-time {
+  color: var(--text-muted);
 }

@@ -1,23 +1,23 @@
 /* ===================================================
-   Verify Email Styles - Variable-Driven
+   Verify Email Styles - Variable-Driven & Aesthetic
    =================================================== */
 
 .verify-page-container {
-  min-height: 100vh;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--bg-body);
-  padding: 24px 16px;
+  padding: 32px 16px;
 }
 
 .verify-card {
-  max-width: 440px;
+  max-width: 480px;
   width: 100%;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 36px 28px;
+  padding: 36px 32px;
   box-shadow: var(--shadow-modal);
   text-align: center;
 }
@@ -26,40 +26,113 @@
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
-.verify-message {
+.verify-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.verify-success-block,
+.verify-error-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.verify-welcome-text {
   font-size: 0.92rem;
   color: var(--text-secondary);
   line-height: 1.5;
-  margin-bottom: 24px;
+}
+
+.verify-creator-signature {
+  background-color: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.verify-creator-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.verify-creator-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.verify-social-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.verify-social-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verify-svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.verify-social-pill:hover {
+  color: var(--text-primary);
+  border-color: var(--border-focus);
 }
 
 .verify-alert-success {
   background-color: var(--badge-resolved-bg);
   border: 1px solid var(--badge-resolved-border);
   color: var(--badge-resolved-text);
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 6px;
   font-size: 0.88rem;
-  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .verify-alert-error {
   background-color: var(--badge-open-bg);
   border: 1px solid var(--badge-open-border);
   color: var(--badge-open-text);
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 6px;
   font-size: 0.88rem;
-  margin-bottom: 20px;
 }
 
 .verify-login-btn {
   display: inline-block;
   width: 100%;
-  padding: 10px 16px;
+  padding: 11px 16px;
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--accent-btn-text) !important;
@@ -68,6 +141,7 @@
   border-radius: 6px;
   text-decoration: none !important;
   transition: all 0.15s ease;
+  margin-top: 6px;
 }
 
 .verify-login-btn:hover {

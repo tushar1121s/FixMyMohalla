@@ -318,6 +318,7 @@ society-tracker/
 |---|---|---|---|
 | `GET` | `/notices/` | Authenticated | Retrieve all official notices (Pinned notices returned first) |
 | `POST` | `/notices/` | Admin | Publish new society circular with optional high-priority flag |
+| `DELETE`| `/notices/{id}` | Admin | Delete an official society notice circular |
 
 ### 4. Metrics & Analytics
 | Method | Endpoint | Access | Description |
@@ -406,8 +407,9 @@ erDiagram
 *B.Tech in Computer Science & Engineering (Final Year)*  
 **Vellore Institute of Technology (VIT), Chennai**  
 
-- **GitHub**: [github.com/tusharkumar](https://github.com/tushar1121s)
+- **Instagram**: [@kum_tushar_1407](https://www.instagram.com/kum_tushar_1407/)
 - **LinkedIn**: [linkedin.com/in/tusharkumar](https://www.linkedin.com/in/tushar-kumar-bb3ab128a/)
+- **GitHub**: [github.com/tusharkumar](https://github.com/tushar1121s)
 - **Email**: `tusharkumarjuly14@gmail.com`
 
 ---

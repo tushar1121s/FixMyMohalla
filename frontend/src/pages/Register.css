@@ -90,8 +90,34 @@
 
 .register-banner-footer {
   font-size: 0.78rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.register-creator-brand strong {
+  color: #ffffff;
+}
+
+.register-social-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.register-social-link {
+  color: #94a3b8;
+  text-decoration: none !important;
+  transition: color 0.15s ease;
+}
+
+.register-social-link:hover {
+  color: #60a5fa;
+  text-decoration: underline !important;
 }
 
 /* Right Form Panel */

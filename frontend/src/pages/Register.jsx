@@ -62,7 +62,37 @@ function Register() {
           </div>
 
           <div className="register-banner-footer">
-            FixMyMohalla Platform
+            <div className="register-creator-brand">
+              Crafted by <strong>Tushar Kumar</strong> · VIT Chennai
+            </div>
+            <div className="register-social-row">
+              <a
+                href="https://www.instagram.com/kum_tushar_1407/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="register-social-link"
+              >
+                Instagram
+              </a>
+              <span>•</span>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="register-social-link"
+              >
+                GitHub
+              </a>
+              <span>•</span>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="register-social-link"
+              >
+                LinkedIn
+              </a>
+            </div>
           </div>
         </div>
 

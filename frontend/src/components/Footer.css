@@ -1,0 +1,106 @@
+/* ===================================================
+   Global Footer Styles - Subtle, Matching, Production-Grade
+   =================================================== */
+
+.app-footer {
+  width: 100%;
+  padding: 24px 20px;
+  background-color: var(--bg-body);
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+  transition: all 0.2s ease;
+}
+
+.footer-content {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.footer-divider {
+  color: var(--text-faint);
+}
+
+.footer-heart {
+  color: #eab308;
+}
+
+.footer-author {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+}
+
+.footer-link {
+  color: var(--text-muted);
+  text-decoration: none !important;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.footer-link:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-card-subtle);
+}
+
+.footer-link-instagram:hover {
+  color: #e1306c;
+}
+
+.footer-link-github:hover {
+  color: var(--text-primary);
+}
+
+.footer-link-linkedin:hover {
+  color: #0a66c2;
+}
+
+.footer-link-dot {
+  color: var(--border-color);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 640px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}

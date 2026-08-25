@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -39,3 +39,20 @@ def get_all_notices(
         .all()
     )
     return notices
+
+
+@router.delete("/{notice_id}", status_code=status.HTTP_200_OK)
+def delete_notice(
+    notice_id: int,
+    db: Session = Depends(get_db),
+    admin_user: User = Depends(require_admin),
+):
+    notice = db.query(Notice).filter(Notice.id == notice_id).first()
+    if not notice:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Notice not found",
+        )
+    db.delete(notice)
+    db.commit()
+    return {"message": "Notice deleted successfully", "id": notice_id}
