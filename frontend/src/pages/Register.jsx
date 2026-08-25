@@ -77,10 +77,10 @@ function Register() {
 
           {success ? (
             <div className="register-alert-success">
-              <div className="register-success-title">Registration Successful</div>
-              <p>Please check your email inbox to verify your account before signing in.</p>
+              <div className="register-success-title">Registration Successful!</div>
+              <p>We've sent a verification link to your email. Please verify your email before signing in.</p>
               <Link to="/login" className="register-success-link-btn">
-                Proceed to Sign In
+                Proceed to Sign In →
               </Link>
             </div>
           ) : (
@@ -94,7 +94,7 @@ function Register() {
                   className="register-form-input"
                   type="text"
                   name="name"
-                  placeholder="Enter your name"
+                  placeholder="e.g. Rahul Sharma"
                   value={form.name}
                   onChange={handleChange}
                   required
@@ -127,7 +127,7 @@ function Register() {
                   className="register-form-input"
                   type="text"
                   name="flat_no"
-                  placeholder="e.g. Flat B-402"
+                  placeholder="e.g. Flat A-204, Tower 1"
                   value={form.flat_no}
                   onChange={handleChange}
                 />
@@ -143,7 +143,7 @@ function Register() {
                     className="register-form-input register-password-input"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="Create a strong password"
+                    placeholder="Minimum 6 characters"
                     value={form.password}
                     onChange={handleChange}
                     required
@@ -153,6 +153,7 @@ function Register() {
                     type="button"
                     className="register-password-toggle-btn"
                     onClick={() => setShowPassword(!showPassword)}
+                    tabIndex="-1"
                   >
                     {showPassword ? "Hide" : "Show"}
                   </button>
