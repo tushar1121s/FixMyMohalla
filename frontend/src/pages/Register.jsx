@@ -76,7 +76,7 @@ function Register() {
               </a>
               <span>•</span>
               <a
-                href="https://github.com"
+                href="https://github.com/tushar1121s"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="register-social-link"
@@ -85,7 +85,7 @@ function Register() {
               </a>
               <span>•</span>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/tushar-kumar-bb3ab128a/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="register-social-link"

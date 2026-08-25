@@ -408,8 +408,8 @@ erDiagram
 **Vellore Institute of Technology (VIT), Chennai**  
 
 - **Instagram**: [@kum_tushar_1407](https://www.instagram.com/kum_tushar_1407/)
-- **LinkedIn**: [linkedin.com/in/tusharkumar](https://www.linkedin.com/in/tushar-kumar-bb3ab128a/)
-- **GitHub**: [github.com/tusharkumar](https://github.com/tushar1121s)
+- **LinkedIn**: [linkedin.com/in/tushar-kumar](https://www.linkedin.com/in/tushar-kumar-bb3ab128a/)
+- **GitHub**: [github.com/tushar1121s](https://github.com/tushar1121s)
 - **Email**: `tusharkumarjuly14@gmail.com`
 
 ---
