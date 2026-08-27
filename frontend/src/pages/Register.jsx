@@ -173,7 +173,7 @@ function Register() {
                     className="register-form-input register-password-input"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="Minimum 6 characters"
+                    placeholder="Choose your password"
                     value={form.password}
                     onChange={handleChange}
                     required
