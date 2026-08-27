@@ -7,6 +7,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB.svg?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791.svg?style=flat-square&logo=postgresql&logoColor=white)](https://supabase.com)
+[![Google Gemini](https://img.shields.io/badge/GenAI-Gemini%203.6%20Flash-8E75B2.svg?style=flat-square&logo=googlegemini&logoColor=white)](https://aistudio.google.com)
 [![Cloudinary](https://img.shields.io/badge/Media-Cloudinary-3448C5.svg?style=flat-square&logo=cloudinary&logoColor=white)](https://cloudinary.com)
 [![Brevo](https://img.shields.io/badge/Email-Brevo%20Transactional-0B99FF.svg?style=flat-square&logo=sendinblue&logoColor=white)](https://brevo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
@@ -25,7 +26,8 @@
   - [Resident Experience](#1-resident-experience)
   - [Society Operations & Admin Console](#2-society-operations--admin-console)
   - [Super Admin Security & Committee Management](#3-super-admin-security--committee-management)
-  - [Design System & Studio Dark Mode](#4-design-system--studio-dark-mode)
+  - [Generative AI & Accessibility Ecosystem](#4-generative-ai--accessibility-ecosystem)
+  - [Design System & Studio Dark Mode](#5-design-system--studio-dark-mode)
 - [Technology Stack](#-technology-stack)
 - [Repository Structure](#-repository-structure)
 - [Local Development Setup](#-local-development-setup)
@@ -38,10 +40,12 @@
   - [Complaints Operations](#2-complaints-operations)
   - [Notice Board](#3-notice-board)
   - [Metrics & Analytics](#4-metrics--analytics)
+  - [Generative AI Operations](#5-generative-ai-operations)
 - [Database Schema & Security Architecture](#-database-schema--security-architecture)
 - [Production Deployment Guide](#-production-deployment-guide)
   - [Backend Deployment (Render)](#backend-deployment-render)
   - [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
+- [Strategic AI Roadmap & Future Milestones](#-strategic-ai-roadmap--future-milestones)
 - [Author](#-author)
 - [License](#-license)
 
@@ -120,7 +124,13 @@ Residential societies frequently struggle with grievance handling due to chaotic
 - **Promote / Demote Roles**: Promote active residents to Society Admins or demote existing admins with confirmation safeguards.
 - **Super Admin Hardcoded Immunity**: User ID #1 (`aamijetomar@gmail.com`) is permanently protected from demotion by any admin.
 
-### 4. Design System & Studio Dark Mode
+### 4. Generative AI & Accessibility Ecosystem
+- **Admin AI Copilot (`Google Gemini 3.6 Flash`)**: Converts unstructured rough points into formal, formatted circulars with tone modulation (`🚨 Urgent`, `ℹ️ Routine`, `🎉 Festive`, `⚠️ Strict`).
+- **Bidirectional Multilingual NLP**: Instant 1-click neural translation between English and Hindi for universal resident accessibility.
+- **Abstractive TL;DR Summarizer**: Synthesizes long society circulars into crisp 3-bullet actionable takeaways for fast mobile scanning.
+- **Native Web Speech A11y**: Client-side Text-to-Speech (TTS) with automated Devanagari (Hindi) and English voice matching.
+
+### 5. Design System & Studio Dark Mode
 - **Refined Color Palette**:
   - Light Theme: Crisp clean slate with soft neutral borders.
   - Dark Theme: Deep comfortable charcoal (`#0d1117` background, `#161b22` cards, `#f0f6fc` high-contrast typography).
@@ -135,10 +145,12 @@ Residential societies frequently struggle with grievance handling due to chaotic
 | **Frontend** | React 19, Vite, React Router v7 | Fast Single-Page Application (SPA) with responsive layout |
 | **Styling** | Custom Tokenized CSS3 | Design-token variables, zero CSS bloat, Studio Dark Mode |
 | **Backend** | FastAPI (Python 3.12), Pydantic v2 | High-performance asynchronous REST API framework |
+| **Generative AI** | Google Gemini 3.6 Flash | Multimodal LLM, structured JSON outputs, tone modulation & NLP translation |
 | **ORM & DB** | SQLAlchemy, PostgreSQL (Supabase) | Relational modeling, connection pooling, foreign-key integrity |
 | **Security** | Passlib (Bcrypt), PyJWT | Password hashing, signed 1-hour reset tokens, Bearer auth |
 | **Media CDN** | Cloudinary Python SDK | Cloud image upload and optimized asset delivery |
 | **Email Service** | Brevo (Sendinblue API v3) | Non-blocking transactional email delivery via FastAPI BackgroundTasks |
+| **Speech Engine** | Web Speech Synthesis API | Native browser text-to-speech with bilingual voice auto-matching |
 | **Hosting** | Vercel (Client), Render (Server) | Global Edge CDN & managed Python hosting |
 
 ---
@@ -281,6 +293,7 @@ society-tracker/
 | `CLOUDINARY_CLOUD_NAME`| **Yes** | Cloudinary Cloud Name | `dmxy...` |
 | `CLOUDINARY_API_KEY` | **Yes** | Cloudinary API Key | `48291829...` |
 | `CLOUDINARY_API_SECRET`| **Yes** | Cloudinary API Secret | `Kx9f2L...` |
+| `GEMINI_API_KEY` | **Yes** | Google Gemini Generative AI API Key | `AIzaSyD...` |
 | `FRONTEND_URL` | **Yes** | Origin URL for email action links | `https://fix-my-mohalla.vercel.app` |
 
 ---
@@ -324,6 +337,13 @@ society-tracker/
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | `GET` | `/analytics/summary` | Admin | Fetch operational metrics: total, resolved, pending, overdue SLA |
+
+### 5. Generative AI Operations
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/ai/generate-notice` | Admin | Transform rough notes into structured circulars with tone steering |
+| `POST` | `/ai/translate-notice` | Authenticated | Bidirectional neural translation (English ⟷ Hindi) for notices |
+| `POST` | `/ai/summarize-notice` | Authenticated | Generate 3-bullet abstractive TL;DR summary and one-line takeaway |
 
 ---
 
@@ -398,6 +418,23 @@ erDiagram
 3. Configure Environment Variables:
    - `VITE_API_BASE_URL`: `https://your-backend-service.onrender.com`
 4. Deploy. Vercel will automatically compile and distribute the SPA across its Edge network.
+
+---
+
+## 🗺️ Strategic AI Roadmap & Future Milestones
+
+- [x] **Phase 1: Generative AI Notice Board & Copilot Engine (Completed)**
+  - Automated notice generation with tone steering (`urgent`, `routine`, `festive`, `strict`).
+  - One-click bidirectional neural translation (English ⟷ Hindi).
+  - Abstractive 3-bullet TL;DR summarizer.
+  - Client-side Web Speech A11y with automated Devanagari voice auto-matching.
+- [ ] **Phase 2: "Mohalla Copilot" (RAG Knowledge Engine & macOS-Style Conversational UI)**
+  - 40+ Pre-seeded verified society bylaws, emergency directory, vendor contacts, and maintenance rules.
+  - Centered 70% viewport conversational assistant with Apple macOS-inspired spring slide/scale animations.
+  - Strict Zero-Hallucination guardrail with grounded source citations (`[Source: Official Bylaw #X]`).
+- [ ] **Phase 3: Multimodal Vision AI Inspector (Grievance Triage & Safety Audit)**
+  - Automated damage & defect recognition from uploaded maintenance photos.
+  - Safety hazard detection (exposed high-voltage wiring near water lines) with auto-escalated priority tags.
 
 ---
 
